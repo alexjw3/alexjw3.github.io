@@ -25,7 +25,8 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 25%, #06b6d4 50%, #0891b2 75%, #0e7490 100%);
+    filter: brightness(0.8) contrast(1.2);
 }
 
 .container {
@@ -152,6 +153,7 @@ body {
     padding-top: 80px;
     position: relative;
     background: transparent;
+    overflow: hidden;
 }
 
 .hero::before {
@@ -161,8 +163,31 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at center, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(34, 197, 94, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.2) 0%, transparent 50%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.2) 100%);
     z-index: -1;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="bubble" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="20" cy="20" r="3" fill="url(%23bubble)"/><circle cx="80" cy="30" r="2" fill="url(%23bubble)"/><circle cx="40" cy="70" r="4" fill="url(%23bubble)"/><circle cx="90" cy="80" r="2.5" fill="url(%23bubble)"/></svg>') repeat;
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
 }
 
 .hero-container {
@@ -182,26 +207,46 @@ body {
     font-weight: 700;
     margin-bottom: 1rem;
     line-height: 1.2;
-    text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+    text-shadow: 
+        0 0 30px rgba(34, 197, 94, 0.8),
+        0 0 60px rgba(16, 185, 129, 0.6),
+        2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 30px rgba(34, 197, 94, 0.8), 0 0 60px rgba(16, 185, 129, 0.6), 2px 2px 4px rgba(0, 0, 0, 0.3); }
+    to { text-shadow: 0 0 40px rgba(34, 197, 94, 1), 0 0 80px rgba(16, 185, 129, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.3); }
 }
 
 .highlight {
     color: #fbbf24;
-    text-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
+    text-shadow: 
+        0 0 30px rgba(251, 191, 36, 0.8),
+        0 0 60px rgba(245, 158, 11, 0.6),
+        2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: highlightGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes highlightGlow {
+    from { text-shadow: 0 0 30px rgba(251, 191, 36, 0.8), 0 0 60px rgba(245, 158, 11, 0.6), 2px 2px 4px rgba(0, 0, 0, 0.3); }
+    to { text-shadow: 0 0 40px rgba(251, 191, 36, 1), 0 0 80px rgba(245, 158, 11, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.3); }
 }
 
 .hero-subtitle {
     font-size: 1.5rem;
     font-weight: 500;
     margin-bottom: 1rem;
-    color: #d1d5db;
+    color: #e0f2fe;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero-description {
     font-size: 1.1rem;
     margin-bottom: 2rem;
-    color: #9ca3af;
+    color: #bae6fd;
     line-height: 1.7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .hero-buttons {
@@ -222,6 +267,7 @@ body {
     font-size: 1rem;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .btn::before {
@@ -231,7 +277,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transition: left 0.5s;
 }
 
@@ -242,48 +288,91 @@ body {
 .btn-primary {
     background: linear-gradient(135deg, #fbbf24, #f59e0b);
     color: #1f2937;
-    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+    box-shadow: 
+        0 4px 15px rgba(251, 191, 36, 0.4),
+        0 0 30px rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .btn-primary:hover {
     background: linear-gradient(135deg, #f59e0b, #d97706);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+    box-shadow: 
+        0 10px 25px rgba(251, 191, 36, 0.5),
+        0 0 40px rgba(251, 191, 36, 0.3);
 }
 
 .btn-secondary {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 10px 25px rgba(255, 255, 255, 0.2),
+        0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 .hero-image {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .profile-placeholder {
     width: 300px;
     height: 300px;
-    background: rgba(96, 165, 250, 0.1);
+    background: 
+        radial-gradient(circle at center, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 50%, transparent 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 5rem;
-    color: rgba(96, 165, 250, 0.3);
-    border: 3px solid rgba(96, 165, 250, 0.2);
+    color: rgba(34, 197, 94, 0.4);
+    border: 3px solid rgba(34, 197, 94, 0.3);
     backdrop-filter: blur(10px);
-    box-shadow: 0 0 50px rgba(96, 165, 250, 0.2);
+    box-shadow: 
+        0 0 50px rgba(34, 197, 94, 0.3),
+        0 0 100px rgba(16, 185, 129, 0.2),
+        inset 0 0 50px rgba(34, 197, 94, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Underwater plant decorations */
+.hero-image::before,
+.hero-image::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    width: 100px;
+    height: 150px;
+    background: linear-gradient(180deg, transparent 0%, rgba(34, 197, 94, 0.3) 50%, rgba(16, 185, 129, 0.4) 100%);
+    border-radius: 50% 50% 0 0;
+    animation: sway 4s ease-in-out infinite;
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-15deg) translateY(0px); }
+    50% { transform: rotate(-10deg) translateY(-10px); }
+}
+
+.hero-image::before {
+    left: 20%;
+    transform: rotate(-15deg);
+    animation-delay: -2s;
+}
+
+.hero-image::after {
+    right: 20%;
+    transform: rotate(15deg);
+    animation-delay: -1s;
 }
 
 /* Section Styles */
