@@ -1,3 +1,136 @@
+// Flow Field Animation
+class FlowField {
+    constructor() {
+        this.canvas = document.getElementById('flowField');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.flowField = [];
+        this.fieldSize = 20;
+        this.cols = 0;
+        this.rows = 0;
+        this.time = 0;
+        
+        this.init();
+        this.createParticles();
+        this.animate();
+    }
+    
+    init() {
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        
+        this.cols = Math.floor(this.canvas.width / this.fieldSize);
+        this.rows = Math.floor(this.canvas.height / this.fieldSize);
+        
+        this.flowField = [];
+        for (let y = 0; y < this.rows; y++) {
+            this.flowField[y] = [];
+            for (let x = 0; x < this.cols; x++) {
+                this.flowField[y][x] = 0;
+            }
+        }
+    }
+    
+    createParticles() {
+        const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 20000);
+        
+        for (let i = 0; i < particleCount; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                vx: 0,
+                vy: 0,
+                life: Math.random() * 0.5 + 0.5,
+                maxLife: Math.random() * 0.5 + 0.5,
+                size: Math.random() * 2 + 1,
+                color: `hsl(${200 + Math.random() * 60}, 70%, ${60 + Math.random() * 20}%)`
+            });
+        }
+    }
+    
+    updateFlowField() {
+        for (let y = 0; y < this.rows; y++) {
+            for (let x = 0; x < this.cols; x++) {
+                const angle = (Math.sin(x * 0.02 + this.time) + Math.cos(y * 0.02 + this.time)) * Math.PI;
+                this.flowField[y][x] = angle;
+            }
+        }
+    }
+    
+    updateParticles() {
+        this.particles.forEach(particle => {
+            const col = Math.floor(particle.x / this.fieldSize);
+            const row = Math.floor(particle.y / this.fieldSize);
+            
+            if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
+                const angle = this.flowField[row][col];
+                const force = 0.5;
+                
+                particle.vx += Math.cos(angle) * force;
+                particle.vy += Math.sin(angle) * force;
+            }
+            
+            // Apply velocity
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            
+            // Apply friction
+            particle.vx *= 0.99;
+            particle.vy *= 0.99;
+            
+            // Wrap around edges
+            if (particle.x < 0) particle.x = this.canvas.width;
+            if (particle.x > this.canvas.width) particle.x = 0;
+            if (particle.y < 0) particle.y = this.canvas.height;
+            if (particle.y > this.canvas.height) particle.y = 0;
+            
+            // Update life
+            particle.life -= 0.005;
+            if (particle.life <= 0) {
+                particle.x = Math.random() * this.canvas.width;
+                particle.y = Math.random() * this.canvas.height;
+                particle.life = particle.maxLife;
+                particle.vx = 0;
+                particle.vy = 0;
+            }
+        });
+    }
+    
+    draw() {
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.particles.forEach(particle => {
+            const alpha = particle.life / particle.maxLife;
+            this.ctx.save();
+            this.ctx.globalAlpha = alpha;
+            this.ctx.fillStyle = particle.color;
+            this.ctx.beginPath();
+            this.ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.restore();
+        });
+    }
+    
+    animate() {
+        this.time += 0.01;
+        this.updateFlowField();
+        this.updateParticles();
+        this.draw();
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// Initialize flow field when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new FlowField();
+});
+
 // Mobile Navigation Toggle
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
@@ -31,11 +164,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.15)';
+        navbar.style.background = 'rgba(10, 10, 10, 0.95)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.4)';
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.style.background = 'rgba(10, 10, 10, 0.8)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
     }
 });
 
