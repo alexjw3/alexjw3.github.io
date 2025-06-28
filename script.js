@@ -1,14 +1,16 @@
-// Flow Field Animation
+// Flow Field Animation with Fish-like Particles
 class FlowField {
     constructor() {
         this.canvas = document.getElementById('flowField');
         this.ctx = this.canvas.getContext('2d');
         this.particles = [];
         this.flowField = [];
-        this.fieldSize = 20;
+        this.fieldSize = 15;
         this.cols = 0;
         this.rows = 0;
         this.time = 0;
+        this.mouse = { x: 0, y: 0, radius: 100 };
+        this.isMouseActive = false;
         
         this.init();
         this.createParticles();
@@ -18,6 +20,17 @@ class FlowField {
     init() {
         this.resize();
         window.addEventListener('resize', () => this.resize());
+        
+        // Mouse tracking
+        this.canvas.addEventListener('mousemove', (e) => {
+            this.mouse.x = e.clientX;
+            this.mouse.y = e.clientY;
+            this.isMouseActive = true;
+        });
+        
+        this.canvas.addEventListener('mouseleave', () => {
+            this.isMouseActive = false;
+        });
     }
     
     resize() {
@@ -37,7 +50,8 @@ class FlowField {
     }
     
     createParticles() {
-        const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 20000);
+        // More particles for fish-like concentration
+        const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 15000);
         
         for (let i = 0; i < particleCount; i++) {
             this.particles.push({
@@ -45,10 +59,16 @@ class FlowField {
                 y: Math.random() * this.canvas.height,
                 vx: 0,
                 vy: 0,
-                life: Math.random() * 0.5 + 0.5,
-                maxLife: Math.random() * 0.5 + 0.5,
-                size: Math.random() * 2 + 1,
-                color: `hsl(${200 + Math.random() * 60}, 70%, ${60 + Math.random() * 20}%)`
+                life: Math.random() * 0.3 + 0.7, // Longer life for fish
+                maxLife: Math.random() * 0.3 + 0.7,
+                size: Math.random() * 3 + 2, // Slightly larger
+                color: `hsl(${200 + Math.random() * 40}, 80%, ${50 + Math.random() * 30}%)`,
+                // Fish-like properties
+                tailAngle: 0,
+                tailSpeed: Math.random() * 0.1 + 0.05,
+                direction: Math.random() * Math.PI * 2,
+                speed: Math.random() * 0.5 + 0.3, // Slower movement
+                schoolRadius: Math.random() * 50 + 30
             });
         }
     }
@@ -56,7 +76,7 @@ class FlowField {
     updateFlowField() {
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
-                const angle = (Math.sin(x * 0.02 + this.time) + Math.cos(y * 0.02 + this.time)) * Math.PI;
+                const angle = (Math.sin(x * 0.015 + this.time) + Math.cos(y * 0.015 + this.time)) * Math.PI;
                 this.flowField[y][x] = angle;
             }
         }
@@ -64,24 +84,51 @@ class FlowField {
     
     updateParticles() {
         this.particles.forEach(particle => {
-            const col = Math.floor(particle.x / this.fieldSize);
-            const row = Math.floor(particle.y / this.fieldSize);
+            // Update tail animation
+            particle.tailAngle += particle.tailSpeed;
             
-            if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
-                const angle = this.flowField[row][col];
-                const force = 0.5;
+            // Calculate distance to mouse
+            const dx = this.mouse.x - particle.x;
+            const dy = this.mouse.y - particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            let targetAngle = particle.direction;
+            
+            if (this.isMouseActive && distance < this.mouse.radius) {
+                // Fish behavior: flee but encircle
+                if (distance < 30) {
+                    // Flee directly away from mouse
+                    targetAngle = Math.atan2(-dy, -dx);
+                } else {
+                    // Encircle the mouse
+                    const circleAngle = Math.atan2(dy, dx) + Math.PI / 2;
+                    const fleeAngle = Math.atan2(-dy, -dx);
+                    targetAngle = (circleAngle + fleeAngle) / 2;
+                }
                 
-                particle.vx += Math.cos(angle) * force;
-                particle.vy += Math.sin(angle) * force;
+                // Add some randomness to make it more natural
+                targetAngle += (Math.random() - 0.5) * 0.5;
+            } else {
+                // Normal flow field behavior
+                const col = Math.floor(particle.x / this.fieldSize);
+                const row = Math.floor(particle.y / this.fieldSize);
+                
+                if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
+                    const fieldAngle = this.flowField[row][col];
+                    targetAngle = fieldAngle;
+                }
             }
             
-            // Apply velocity
+            // Smoothly adjust direction
+            const angleDiff = targetAngle - particle.direction;
+            particle.direction += angleDiff * 0.1;
+            
+            // Apply movement
+            particle.vx = Math.cos(particle.direction) * particle.speed;
+            particle.vy = Math.sin(particle.direction) * particle.speed;
+            
             particle.x += particle.vx;
             particle.y += particle.vy;
-            
-            // Apply friction
-            particle.vx *= 0.99;
-            particle.vy *= 0.99;
             
             // Wrap around edges
             if (particle.x < 0) particle.x = this.canvas.width;
@@ -90,35 +137,81 @@ class FlowField {
             if (particle.y > this.canvas.height) particle.y = 0;
             
             // Update life
-            particle.life -= 0.005;
+            particle.life -= 0.002; // Slower life decay
             if (particle.life <= 0) {
                 particle.x = Math.random() * this.canvas.width;
                 particle.y = Math.random() * this.canvas.height;
                 particle.life = particle.maxLife;
-                particle.vx = 0;
-                particle.vy = 0;
+                particle.direction = Math.random() * Math.PI * 2;
             }
         });
     }
     
+    drawFish(particle) {
+        const alpha = particle.life / particle.maxLife;
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+        this.ctx.translate(particle.x, particle.y);
+        this.ctx.rotate(particle.direction);
+        
+        // Fish body
+        this.ctx.fillStyle = particle.color;
+        this.ctx.beginPath();
+        this.ctx.ellipse(0, 0, particle.size, particle.size * 0.6, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Fish tail
+        this.ctx.beginPath();
+        this.ctx.moveTo(-particle.size * 0.8, 0);
+        this.ctx.quadraticCurveTo(
+            -particle.size * 1.5, -particle.size * 0.8 * Math.sin(particle.tailAngle),
+            -particle.size * 1.8, -particle.size * 0.4 * Math.sin(particle.tailAngle)
+        );
+        this.ctx.quadraticCurveTo(
+            -particle.size * 1.5, particle.size * 0.8 * Math.sin(particle.tailAngle),
+            -particle.size * 0.8, 0
+        );
+        this.ctx.fill();
+        
+        // Fish eye
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.ctx.beginPath();
+        this.ctx.arc(particle.size * 0.3, -particle.size * 0.2, particle.size * 0.15, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Fish pupil
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        this.ctx.beginPath();
+        this.ctx.arc(particle.size * 0.35, -particle.size * 0.2, particle.size * 0.08, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        this.ctx.restore();
+    }
+    
     draw() {
-        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+        // Create a subtle trail effect
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
+        // Draw fish particles
         this.particles.forEach(particle => {
-            const alpha = particle.life / particle.maxLife;
+            this.drawFish(particle);
+        });
+        
+        // Optional: Draw mouse influence area (subtle)
+        if (this.isMouseActive) {
             this.ctx.save();
-            this.ctx.globalAlpha = alpha;
-            this.ctx.fillStyle = particle.color;
+            this.ctx.globalAlpha = 0.1;
+            this.ctx.fillStyle = 'rgba(96, 165, 250, 0.3)';
             this.ctx.beginPath();
-            this.ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
+            this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius, 0, Math.PI * 2);
             this.ctx.fill();
             this.ctx.restore();
-        });
+        }
     }
     
     animate() {
-        this.time += 0.01;
+        this.time += 0.008; // Slower time progression
         this.updateFlowField();
         this.updateParticles();
         this.draw();
