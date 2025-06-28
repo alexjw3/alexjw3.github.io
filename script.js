@@ -52,8 +52,8 @@ class FlowField {
     }
     
     createParticles() {
-        // More particles for fish-like concentration
-        const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 12000);
+        // More fish for a lush pond
+        const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 8000);
         
         for (let i = 0; i < particleCount; i++) {
             this.particles.push({
@@ -61,51 +61,65 @@ class FlowField {
                 y: Math.random() * this.canvas.height,
                 vx: 0,
                 vy: 0,
-                life: Math.random() * 0.3 + 0.7, // Longer life for fish
+                life: Math.random() * 0.3 + 0.7,
                 maxLife: Math.random() * 0.3 + 0.7,
-                size: Math.random() * 4 + 3, // Larger fish
-                // Vibrant fish colors
+                size: Math.random() * 6 + 4, // Larger fish
+                // Bright, lush fish colors
                 color: this.getFishColor(),
-                // Fish-like properties
+                // Enhanced fish-like properties
                 tailAngle: 0,
-                tailSpeed: Math.random() * 0.15 + 0.08,
+                tailSpeed: Math.random() * 0.2 + 0.1,
                 direction: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.6 + 0.4, // Slightly faster
-                schoolRadius: Math.random() * 60 + 40,
+                speed: Math.random() * 0.8 + 0.6, // Faster fish
+                schoolRadius: Math.random() * 80 + 60,
                 // Fish personality
                 personality: Math.random(),
                 finAngle: 0,
-                finSpeed: Math.random() * 0.2 + 0.1
+                finSpeed: Math.random() * 0.25 + 0.15,
+                // New fish properties
+                bodyLength: Math.random() * 0.4 + 0.8,
+                finSize: Math.random() * 0.3 + 0.7,
+                tailSize: Math.random() * 0.4 + 0.8,
+                eyeSize: Math.random() * 0.2 + 0.3,
+                // Glow effect
+                glow: Math.random() * 0.3 + 0.7,
+                // Swimming pattern
+                swimPattern: Math.random(),
+                patternOffset: Math.random() * Math.PI * 2
             });
         }
     }
     
     createBubbles() {
-        const bubbleCount = Math.floor((this.canvas.width * this.canvas.height) / 30000);
+        const bubbleCount = Math.floor((this.canvas.width * this.canvas.height) / 20000);
         
         for (let i = 0; i < bubbleCount; i++) {
             this.bubbles.push({
                 x: Math.random() * this.canvas.width,
                 y: this.canvas.height + Math.random() * 100,
-                size: Math.random() * 6 + 2,
-                speed: Math.random() * 1 + 0.5,
+                size: Math.random() * 8 + 3,
+                speed: Math.random() * 1.5 + 0.8,
                 wobble: Math.random() * 0.1,
-                wobbleSpeed: Math.random() * 0.05 + 0.02,
-                opacity: Math.random() * 0.3 + 0.1
+                wobbleSpeed: Math.random() * 0.08 + 0.03,
+                opacity: Math.random() * 0.4 + 0.2
             });
         }
     }
     
     getFishColor() {
         const colors = [
-            'hsl(200, 90%, 60%)',   // Bright blue
-            'hsl(160, 85%, 55%)',   // Emerald green
-            'hsl(45, 95%, 65%)',    // Golden yellow
-            'hsl(320, 80%, 65%)',   // Pink
-            'hsl(280, 85%, 65%)',   // Purple
-            'hsl(15, 90%, 65%)',    // Orange
-            'hsl(120, 85%, 55%)',   // Lime green
-            'hsl(260, 85%, 65%)'    // Violet
+            'hsl(200, 95%, 70%)',   // Bright electric blue
+            'hsl(160, 90%, 65%)',   // Vibrant emerald
+            'hsl(45, 100%, 75%)',   // Bright golden yellow
+            'hsl(320, 85%, 75%)',   // Bright pink
+            'hsl(280, 90%, 75%)',   // Bright purple
+            'hsl(15, 95%, 75%)',    // Bright orange
+            'hsl(120, 90%, 65%)',   // Bright lime
+            'hsl(260, 90%, 75%)',   // Bright violet
+            'hsl(180, 95%, 70%)',   // Bright cyan
+            'hsl(30, 95%, 75%)',    // Bright amber
+            'hsl(340, 85%, 75%)',   // Bright magenta
+            'hsl(60, 95%, 75%)'     // Bright yellow
         ];
         return colors[Math.floor(Math.random() * colors.length)];
     }
@@ -113,7 +127,7 @@ class FlowField {
     updateFlowField() {
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
-                const angle = (Math.sin(x * 0.012 + this.time) + Math.cos(y * 0.012 + this.time)) * Math.PI;
+                const angle = (Math.sin(x * 0.015 + this.time) + Math.cos(y * 0.015 + this.time)) * Math.PI;
                 this.flowField[y][x] = angle;
             }
         }
@@ -122,7 +136,7 @@ class FlowField {
     updateBubbles() {
         this.bubbles.forEach(bubble => {
             bubble.y -= bubble.speed;
-            bubble.x += Math.sin(bubble.wobble) * 0.5;
+            bubble.x += Math.sin(bubble.wobble) * 0.8;
             bubble.wobble += bubble.wobbleSpeed;
             
             if (bubble.y < -bubble.size) {
@@ -147,33 +161,34 @@ class FlowField {
             
             if (this.isMouseActive && distance < this.mouse.radius) {
                 // Enhanced fish behavior: flee but encircle with personality
-                if (distance < 25) {
+                if (distance < 30) {
                     // Flee directly away from mouse
                     targetAngle = Math.atan2(-dy, -dx);
                 } else {
                     // Encircle the mouse with personality-based variation
                     const circleAngle = Math.atan2(dy, dx) + Math.PI / 2;
                     const fleeAngle = Math.atan2(-dy, -dx);
-                    const personalityFactor = (particle.personality - 0.5) * 0.5;
+                    const personalityFactor = (particle.personality - 0.5) * 0.6;
                     targetAngle = (circleAngle + fleeAngle) / 2 + personalityFactor;
                 }
                 
                 // Add some randomness to make it more natural
-                targetAngle += (Math.random() - 0.5) * 0.3;
+                targetAngle += (Math.random() - 0.5) * 0.4;
             } else {
-                // Normal flow field behavior with personality
+                // Normal flow field behavior with personality and swimming pattern
                 const col = Math.floor(particle.x / this.fieldSize);
                 const row = Math.floor(particle.y / this.fieldSize);
                 
                 if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
                     const fieldAngle = this.flowField[row][col];
-                    targetAngle = fieldAngle + (particle.personality - 0.5) * 0.2;
+                    const patternAngle = Math.sin(this.time * 0.5 + particle.patternOffset) * 0.3;
+                    targetAngle = fieldAngle + (particle.personality - 0.5) * 0.3 + patternAngle;
                 }
             }
             
             // Smoothly adjust direction
             const angleDiff = targetAngle - particle.direction;
-            particle.direction += angleDiff * 0.08;
+            particle.direction += angleDiff * 0.1;
             
             // Apply movement
             particle.vx = Math.cos(particle.direction) * particle.speed;
@@ -189,7 +204,7 @@ class FlowField {
             if (particle.y > this.canvas.height) particle.y = 0;
             
             // Update life
-            particle.life -= 0.001; // Much slower life decay
+            particle.life -= 0.0005; // Much slower life decay
             if (particle.life <= 0) {
                 particle.x = Math.random() * this.canvas.width;
                 particle.y = Math.random() * this.canvas.height;
@@ -201,138 +216,163 @@ class FlowField {
     }
     
     drawFish(particle) {
-        const alpha = particle.life / particle.maxLife;
-        this.ctx.save();
-        this.ctx.globalAlpha = alpha;
-        this.ctx.translate(particle.x, particle.y);
-        this.ctx.rotate(particle.direction);
+        const ctx = this.ctx;
+        const x = particle.x;
+        const y = particle.y;
+        const size = particle.size;
+        const direction = particle.direction;
         
-        // Fish body with gradient
-        const gradient = this.ctx.createLinearGradient(-particle.size, 0, particle.size, 0);
-        gradient.addColorStop(0, particle.color);
-        gradient.addColorStop(1, this.adjustColor(particle.color, -20));
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(direction);
         
-        this.ctx.fillStyle = gradient;
-        this.ctx.beginPath();
-        this.ctx.ellipse(0, 0, particle.size, particle.size * 0.6, 0, 0, Math.PI * 2);
-        this.ctx.fill();
+        // Fish glow effect
+        ctx.shadowColor = particle.color;
+        ctx.shadowBlur = size * particle.glow;
         
-        // Fish tail with animation
-        this.ctx.beginPath();
-        this.ctx.moveTo(-particle.size * 0.8, 0);
-        this.ctx.quadraticCurveTo(
-            -particle.size * 1.8, -particle.size * 0.9 * Math.sin(particle.tailAngle),
-            -particle.size * 2.2, -particle.size * 0.5 * Math.sin(particle.tailAngle)
-        );
-        this.ctx.quadraticCurveTo(
-            -particle.size * 1.8, particle.size * 0.9 * Math.sin(particle.tailAngle),
-            -particle.size * 0.8, 0
-        );
-        this.ctx.fill();
+        // Fish body (main part)
+        const bodyLength = size * particle.bodyLength;
+        const bodyHeight = size * 0.6;
         
-        // Fish fins
-        this.ctx.beginPath();
-        this.ctx.moveTo(0, -particle.size * 0.3);
-        this.ctx.quadraticCurveTo(
-            particle.size * 0.5, -particle.size * 0.8 * Math.sin(particle.finAngle),
-            particle.size * 0.8, -particle.size * 0.4 * Math.sin(particle.finAngle)
-        );
-        this.ctx.quadraticCurveTo(
-            particle.size * 0.5, -particle.size * 0.2,
-            0, -particle.size * 0.3
-        );
-        this.ctx.fill();
+        // Main body
+        ctx.fillStyle = particle.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, bodyLength, bodyHeight, 0, 0, Math.PI * 2);
+        ctx.fill();
         
-        // Fish eye with shine
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        this.ctx.beginPath();
-        this.ctx.arc(particle.size * 0.3, -particle.size * 0.2, particle.size * 0.18, 0, Math.PI * 2);
-        this.ctx.fill();
+        // Fish tail
+        const tailLength = size * particle.tailSize;
+        const tailWidth = size * 0.4;
+        const tailAngle = Math.sin(particle.tailAngle) * 0.3;
         
-        // Fish pupil
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
-        this.ctx.beginPath();
-        this.ctx.arc(particle.size * 0.35, -particle.size * 0.2, particle.size * 0.1, 0, Math.PI * 2);
-        this.ctx.fill();
+        ctx.save();
+        ctx.translate(-bodyLength, 0);
+        ctx.rotate(tailAngle);
         
-        // Eye shine
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        this.ctx.beginPath();
-        this.ctx.arc(particle.size * 0.25, -particle.size * 0.25, particle.size * 0.05, 0, Math.PI * 2);
-        this.ctx.fill();
+        // Tail fin
+        ctx.fillStyle = this.adjustColor(particle.color, -20);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-tailLength, -tailWidth);
+        ctx.lineTo(-tailLength * 0.8, 0);
+        ctx.lineTo(-tailLength, tailWidth);
+        ctx.closePath();
+        ctx.fill();
         
-        this.ctx.restore();
+        ctx.restore();
+        
+        // Side fins
+        const finLength = size * particle.finSize;
+        const finAngle = Math.sin(particle.finAngle) * 0.2;
+        
+        // Top fin
+        ctx.save();
+        ctx.translate(0, -bodyHeight * 0.3);
+        ctx.rotate(finAngle);
+        ctx.fillStyle = this.adjustColor(particle.color, -15);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-finLength * 0.5, -finLength);
+        ctx.lineTo(-finLength * 0.3, -finLength * 0.7);
+        ctx.lineTo(0, -finLength * 0.3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        
+        // Bottom fin
+        ctx.save();
+        ctx.translate(0, bodyHeight * 0.3);
+        ctx.rotate(-finAngle);
+        ctx.fillStyle = this.adjustColor(particle.color, -15);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-finLength * 0.5, finLength);
+        ctx.lineTo(-finLength * 0.3, finLength * 0.7);
+        ctx.lineTo(0, finLength * 0.3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        
+        // Fish eye
+        const eyeSize = size * particle.eyeSize;
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(bodyLength * 0.3, -bodyHeight * 0.2, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Eye pupil
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(bodyLength * 0.3, -bodyHeight * 0.2, eyeSize * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Eye highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(bodyLength * 0.25, -bodyHeight * 0.25, eyeSize * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Fish gills
+        ctx.strokeStyle = this.adjustColor(particle.color, -30);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(bodyLength * 0.1, 0, bodyHeight * 0.4, Math.PI / 2, -Math.PI / 2);
+        ctx.stroke();
+        
+        ctx.restore();
     }
     
     drawBubbles() {
         this.bubbles.forEach(bubble => {
             this.ctx.save();
-            this.ctx.globalAlpha = bubble.opacity;
-            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            
+            // Bubble glow
+            this.ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            this.ctx.shadowBlur = bubble.size * 0.5;
+            
+            // Bubble
+            this.ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity})`;
             this.ctx.beginPath();
             this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
             this.ctx.fill();
             
             // Bubble highlight
-            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            this.ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity * 0.8})`;
             this.ctx.beginPath();
-            this.ctx.arc(bubble.x - bubble.size * 0.3, bubble.y - bubble.size * 0.3, bubble.size * 0.3, 0, Math.PI * 2);
+            this.ctx.arc(bubble.x - bubble.size * 0.3, bubble.y - bubble.size * 0.3, bubble.size * 0.4, 0, Math.PI * 2);
             this.ctx.fill();
+            
             this.ctx.restore();
         });
     }
     
     adjustColor(color, amount) {
-        const hsl = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-        if (hsl) {
-            const h = parseInt(hsl[1]);
-            const s = parseInt(hsl[2]);
-            const l = Math.max(0, Math.min(100, parseInt(hsl[3]) + amount));
-            return `hsl(${h}, ${s}%, ${l}%)`;
+        // Simple color adjustment for fish parts
+        if (color.startsWith('hsl')) {
+            const values = color.match(/hsl\(([^)]+)\)/)[1].split(',').map(v => parseFloat(v.trim()));
+            values[2] = Math.max(0, Math.min(100, values[2] + amount));
+            return `hsl(${values[0]}, ${values[1]}%, ${values[2]}%)`;
         }
         return color;
     }
     
     draw() {
-        // Create a subtle underwater trail effect
-        this.ctx.fillStyle = 'rgba(12, 74, 110, 0.1)';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw bubbles first (background)
+        // Draw bubbles first (behind fish)
         this.drawBubbles();
         
-        // Draw fish particles
+        // Draw fish
         this.particles.forEach(particle => {
             this.drawFish(particle);
         });
-        
-        // Enhanced mouse influence area with underwater effect
-        if (this.isMouseActive) {
-            this.ctx.save();
-            this.ctx.globalAlpha = 0.15;
-            
-            // Create radial gradient for mouse influence
-            const gradient = this.ctx.createRadialGradient(
-                this.mouse.x, this.mouse.y, 0,
-                this.mouse.x, this.mouse.y, this.mouse.radius
-            );
-            gradient.addColorStop(0, 'rgba(34, 197, 94, 0.4)');
-            gradient.addColorStop(0.5, 'rgba(16, 185, 129, 0.2)');
-            gradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
-            
-            this.ctx.fillStyle = gradient;
-            this.ctx.beginPath();
-            this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius, 0, Math.PI * 2);
-            this.ctx.fill();
-            this.ctx.restore();
-        }
     }
     
     animate() {
-        this.time += 0.006; // Slower time progression
+        this.time += 0.02;
         this.updateFlowField();
-        this.updateBubbles();
         this.updateParticles();
+        this.updateBubbles();
         this.draw();
         requestAnimationFrame(() => this.animate());
     }
