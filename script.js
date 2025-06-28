@@ -1,21 +1,19 @@
-// Flow Field Animation with Abstract Fish
+// Flow Field Animation with Fish-like Particles
 class FlowField {
     constructor() {
         this.canvas = document.getElementById('flowField');
         this.ctx = this.canvas.getContext('2d');
         this.particles = [];
-        this.bubbles = [];
         this.flowField = [];
         this.fieldSize = 15;
         this.cols = 0;
         this.rows = 0;
         this.time = 0;
-        this.mouse = { x: 0, y: 0, radius: 120 };
+        this.mouse = { x: 0, y: 0, radius: 100 };
         this.isMouseActive = false;
         
         this.init();
         this.createParticles();
-        this.createBubbles();
         this.animate();
     }
     
@@ -52,7 +50,7 @@ class FlowField {
     }
     
     createParticles() {
-        // More fish for a lush pond
+        // Increase particle count for more concentration
         const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 8000);
         
         for (let i = 0; i < particleCount; i++) {
@@ -63,124 +61,75 @@ class FlowField {
                 vy: 0,
                 life: Math.random() * 0.3 + 0.7,
                 maxLife: Math.random() * 0.3 + 0.7,
-                size: Math.random() * 8 + 6, // Larger fish
-                // Bright, lush fish colors
-                color: this.getFishColor(),
-                // Simple fish properties
+                size: Math.random() * 3 + 2,
+                color: `hsl(${180 + Math.random() * 40}, 80%, ${50 + Math.random() * 30}%)`,
+                // Fish-like properties
+                tailAngle: 0,
+                tailSpeed: Math.random() * 0.1 + 0.05,
                 direction: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.8 + 0.6,
-                // Fish personality
-                personality: Math.random(),
-                // Simple animation
-                wiggle: 0,
-                wiggleSpeed: Math.random() * 0.1 + 0.05,
-                // Abstract shape type
-                shapeType: Math.floor(Math.random() * 3) // 0: teardrop, 1: oval, 2: triangle
+                speed: Math.random() * 0.5 + 0.3
             });
         }
-    }
-    
-    createBubbles() {
-        const bubbleCount = Math.floor((this.canvas.width * this.canvas.height) / 20000);
-        
-        for (let i = 0; i < bubbleCount; i++) {
-            this.bubbles.push({
-                x: Math.random() * this.canvas.width,
-                y: this.canvas.height + Math.random() * 100,
-                size: Math.random() * 8 + 3,
-                speed: Math.random() * 1.5 + 0.8,
-                wobble: Math.random() * 0.1,
-                wobbleSpeed: Math.random() * 0.08 + 0.03,
-                opacity: Math.random() * 0.4 + 0.2
-            });
-        }
-    }
-    
-    getFishColor() {
-        const colors = [
-            'hsl(200, 95%, 70%)',   // Bright electric blue
-            'hsl(160, 90%, 65%)',   // Vibrant emerald
-            'hsl(45, 100%, 75%)',   // Bright golden yellow
-            'hsl(320, 85%, 75%)',   // Bright pink
-            'hsl(280, 90%, 75%)',   // Bright purple
-            'hsl(15, 95%, 75%)',    // Bright orange
-            'hsl(120, 90%, 65%)',   // Bright lime
-            'hsl(260, 90%, 75%)',   // Bright violet
-            'hsl(180, 95%, 70%)',   // Bright cyan
-            'hsl(30, 95%, 75%)',    // Bright amber
-            'hsl(340, 85%, 75%)',   // Bright magenta
-            'hsl(60, 95%, 75%)'     // Bright yellow
-        ];
-        return colors[Math.floor(Math.random() * colors.length)];
     }
     
     updateFlowField() {
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.cols; x++) {
-                const angle = (Math.sin(x * 0.015 + this.time) + Math.cos(y * 0.015 + this.time)) * Math.PI;
+                // Create more organic, flowing patterns
+                const angle = (Math.sin(x * 0.015 + this.time * 0.5) + 
+                              Math.cos(y * 0.015 + this.time * 0.3) + 
+                              Math.sin((x + y) * 0.01 + this.time * 0.7)) * Math.PI * 0.5;
                 this.flowField[y][x] = angle;
             }
         }
     }
     
-    updateBubbles() {
-        this.bubbles.forEach(bubble => {
-            bubble.y -= bubble.speed;
-            bubble.x += Math.sin(bubble.wobble) * 0.8;
-            bubble.wobble += bubble.wobbleSpeed;
-            
-            if (bubble.y < -bubble.size) {
-                bubble.y = this.canvas.height + bubble.size;
-                bubble.x = Math.random() * this.canvas.width;
-            }
-        });
-    }
-    
     updateParticles() {
         this.particles.forEach(particle => {
-            // Update simple animation
-            particle.wiggle += particle.wiggleSpeed;
-            
             // Calculate distance to mouse
             const dx = this.mouse.x - particle.x;
             const dy = this.mouse.y - particle.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            let targetAngle = particle.direction;
-            
             if (this.isMouseActive && distance < this.mouse.radius) {
-                // Simple flee behavior
-                if (distance < 30) {
-                    targetAngle = Math.atan2(-dy, -dx);
-                } else {
-                    const circleAngle = Math.atan2(dy, dx) + Math.PI / 2;
-                    const fleeAngle = Math.atan2(-dy, -dx);
-                    const personalityFactor = (particle.personality - 0.5) * 0.6;
-                    targetAngle = (circleAngle + fleeAngle) / 2 + personalityFactor;
-                }
+                // Fish flee from mouse but encircle it
+                const fleeForce = 2;
+                const circleForce = 1;
                 
-                targetAngle += (Math.random() - 0.5) * 0.4;
+                // Flee force (away from mouse)
+                const fleeAngle = Math.atan2(dy, dx) + Math.PI;
+                particle.vx += Math.cos(fleeAngle) * fleeForce;
+                particle.vy += Math.sin(fleeAngle) * fleeForce;
+                
+                // Circle force (perpendicular to flee direction)
+                const circleAngle = fleeAngle + Math.PI / 2;
+                particle.vx += Math.cos(circleAngle) * circleForce;
+                particle.vy += Math.sin(circleAngle) * circleForce;
+                
+                // Add some randomness to make it more natural
+                particle.vx += (Math.random() - 0.5) * 0.5;
+                particle.vy += (Math.random() - 0.5) * 0.5;
             } else {
                 // Normal flow field behavior
                 const col = Math.floor(particle.x / this.fieldSize);
                 const row = Math.floor(particle.y / this.fieldSize);
                 
                 if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
-                    const fieldAngle = this.flowField[row][col];
-                    targetAngle = fieldAngle + (particle.personality - 0.5) * 0.3;
+                    const angle = this.flowField[row][col];
+                    const force = 0.3; // Slower movement
+                    
+                    particle.vx += Math.cos(angle) * force;
+                    particle.vy += Math.sin(angle) * force;
                 }
             }
             
-            // Smoothly adjust direction
-            const angleDiff = targetAngle - particle.direction;
-            particle.direction += angleDiff * 0.1;
+            // Apply velocity with slower movement
+            particle.x += particle.vx * particle.speed;
+            particle.y += particle.vy * particle.speed;
             
-            // Apply movement
-            particle.vx = Math.cos(particle.direction) * particle.speed;
-            particle.vy = Math.sin(particle.direction) * particle.speed;
-            
-            particle.x += particle.vx;
-            particle.y += particle.vy;
+            // Apply friction
+            particle.vx *= 0.98;
+            particle.vy *= 0.98;
             
             // Wrap around edges
             if (particle.x < 0) particle.x = this.canvas.width;
@@ -188,326 +137,92 @@ class FlowField {
             if (particle.y < 0) particle.y = this.canvas.height;
             if (particle.y > this.canvas.height) particle.y = 0;
             
+            // Update fish tail animation
+            particle.tailAngle += particle.tailSpeed;
+            
             // Update life
-            particle.life -= 0.0005;
+            particle.life -= 0.003; // Slower life decay
             if (particle.life <= 0) {
                 particle.x = Math.random() * this.canvas.width;
                 particle.y = Math.random() * this.canvas.height;
                 particle.life = particle.maxLife;
-                particle.direction = Math.random() * Math.PI * 2;
-                particle.color = this.getFishColor();
+                particle.vx = 0;
+                particle.vy = 0;
             }
         });
     }
     
     drawFish(particle) {
-        const ctx = this.ctx;
-        const x = particle.x;
-        const y = particle.y;
-        const size = particle.size;
-        const direction = particle.direction;
-        const wiggle = Math.sin(particle.wiggle) * 0.1;
+        const alpha = particle.life / particle.maxLife;
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+        this.ctx.fillStyle = particle.color;
         
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(direction + wiggle);
+        // Calculate fish direction
+        const angle = Math.atan2(particle.vy, particle.vx);
         
-        // Simple glow effect
-        ctx.shadowColor = particle.color;
-        ctx.shadowBlur = size * 0.5;
+        // Draw fish body
+        this.ctx.save();
+        this.ctx.translate(particle.x, particle.y);
+        this.ctx.rotate(angle);
         
-        // Draw abstract fish based on shape type
-        switch (particle.shapeType) {
-            case 0: // Teardrop shape
-                ctx.fillStyle = particle.color;
-                ctx.beginPath();
-                ctx.moveTo(size, 0);
-                ctx.quadraticCurveTo(size * 0.5, -size * 0.3, -size * 0.5, -size * 0.2);
-                ctx.quadraticCurveTo(-size, 0, -size * 0.5, size * 0.2);
-                ctx.quadraticCurveTo(size * 0.5, size * 0.3, size, 0);
-                ctx.fill();
-                break;
-                
-            case 1: // Oval shape
-                ctx.fillStyle = particle.color;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
-                ctx.fill();
-                break;
-                
-            case 2: // Triangle shape
-                ctx.fillStyle = particle.color;
-                ctx.beginPath();
-                ctx.moveTo(size, 0);
-                ctx.lineTo(-size * 0.5, -size * 0.4);
-                ctx.lineTo(-size * 0.5, size * 0.4);
-                ctx.closePath();
-                ctx.fill();
-                break;
-        }
+        // Fish body (oval)
+        this.ctx.beginPath();
+        this.ctx.ellipse(0, 0, particle.size * 1.5, particle.size * 0.8, 0, 0, Math.PI * 2);
+        this.ctx.fill();
         
-        ctx.restore();
-    }
-    
-    drawBubbles() {
-        this.bubbles.forEach(bubble => {
-            this.ctx.save();
-            
-            // Simple bubble
-            this.ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity})`;
-            this.ctx.beginPath();
-            this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
-            this.ctx.fill();
-            
-            this.ctx.restore();
-        });
+        // Fish tail
+        this.ctx.beginPath();
+        this.ctx.moveTo(-particle.size * 1.5, 0);
+        this.ctx.lineTo(-particle.size * 2.5, -particle.size * 0.8);
+        this.ctx.lineTo(-particle.size * 2.2, 0);
+        this.ctx.lineTo(-particle.size * 2.5, particle.size * 0.8);
+        this.ctx.closePath();
+        this.ctx.fill();
+        
+        // Fish eye
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.ctx.beginPath();
+        this.ctx.arc(particle.size * 0.5, -particle.size * 0.2, particle.size * 0.2, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Fish pupil
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        this.ctx.beginPath();
+        this.ctx.arc(particle.size * 0.6, -particle.size * 0.2, particle.size * 0.1, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        this.ctx.restore();
+        this.ctx.restore();
     }
     
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw bubbles first (behind fish)
-        this.drawBubbles();
-        
-        // Draw fish
+        // Draw fish particles
         this.particles.forEach(particle => {
             this.drawFish(particle);
         });
+        
+        // Draw subtle mouse influence area
+        if (this.isMouseActive) {
+            this.ctx.save();
+            this.ctx.globalAlpha = 0.1;
+            this.ctx.strokeStyle = '#60a5fa';
+            this.ctx.lineWidth = 2;
+            this.ctx.beginPath();
+            this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius, 0, Math.PI * 2);
+            this.ctx.stroke();
+            this.ctx.restore();
+        }
     }
     
     animate() {
-        this.time += 0.02;
+        this.time += 0.005; // Slower time progression
         this.updateFlowField();
         this.updateParticles();
-        this.updateBubbles();
         this.draw();
-        requestAnimationFrame(() => this.animate());
-    }
-}
-
-// Stick Figure Runner Game
-class StickFigureRunner {
-    constructor() {
-        this.canvas = document.getElementById('navGame');
-        this.ctx = this.canvas.getContext('2d');
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
-        
-        // Game state
-        this.gameRunning = false;
-        this.score = 0;
-        this.gameSpeed = 2;
-        
-        // Player
-        this.player = {
-            x: 30,
-            y: this.height - 15,
-            width: 8,
-            height: 15,
-            velocityY: 0,
-            isJumping: false,
-            jumpPower: -8,
-            gravity: 0.5
-        };
-        
-        // Obstacles
-        this.obstacles = [];
-        this.obstacleTimer = 0;
-        this.obstacleInterval = 60;
-        
-        // Ground
-        this.groundY = this.height - 5;
-        
-        this.init();
-    }
-    
-    init() {
-        // Start game on click
-        this.canvas.addEventListener('click', () => {
-            if (!this.gameRunning) {
-                this.startGame();
-            } else {
-                this.jump();
-            }
-        });
-        
-        // Start game on spacebar
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (!this.gameRunning) {
-                    this.startGame();
-                } else {
-                    this.jump();
-                }
-            }
-        });
-        
-        // Draw initial screen
-        this.drawStartScreen();
-    }
-    
-    startGame() {
-        this.gameRunning = true;
-        this.score = 0;
-        this.obstacles = [];
-        this.obstacleTimer = 0;
-        this.gameSpeed = 2;
-        this.player.x = 30;
-        this.player.y = this.height - 15;
-        this.player.velocityY = 0;
-        this.player.isJumping = false;
-        this.animate();
-    }
-    
-    jump() {
-        if (!this.player.isJumping) {
-            this.player.velocityY = this.player.jumpPower;
-            this.player.isJumping = true;
-        }
-    }
-    
-    updatePlayer() {
-        // Apply gravity
-        this.player.velocityY += this.player.gravity;
-        this.player.y += this.player.velocityY;
-        
-        // Ground collision
-        if (this.player.y >= this.groundY - this.player.height) {
-            this.player.y = this.groundY - this.player.height;
-            this.player.velocityY = 0;
-            this.player.isJumping = false;
-        }
-    }
-    
-    updateObstacles() {
-        this.obstacleTimer++;
-        
-        // Create new obstacles
-        if (this.obstacleTimer > this.obstacleInterval) {
-            this.obstacles.push({
-                x: this.width,
-                y: this.groundY - 10,
-                width: 8,
-                height: 10
-            });
-            this.obstacleTimer = 0;
-            this.obstacleInterval = Math.max(30, this.obstacleInterval - 1);
-        }
-        
-        // Move obstacles
-        this.obstacles.forEach(obstacle => {
-            obstacle.x -= this.gameSpeed;
-        });
-        
-        // Remove off-screen obstacles
-        this.obstacles = this.obstacles.filter(obstacle => obstacle.x > -obstacle.width);
-    }
-    
-    checkCollisions() {
-        this.obstacles.forEach(obstacle => {
-            if (this.player.x < obstacle.x + obstacle.width &&
-                this.player.x + this.player.width > obstacle.x &&
-                this.player.y < obstacle.y + obstacle.height &&
-                this.player.y + this.player.height > obstacle.y) {
-                this.gameOver();
-            }
-        });
-    }
-    
-    gameOver() {
-        this.gameRunning = false;
-        this.drawGameOver();
-    }
-    
-    drawPlayer() {
-        this.ctx.fillStyle = '#60a5fa';
-        
-        // Body
-        this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
-        
-        // Head
-        this.ctx.beginPath();
-        this.ctx.arc(this.player.x + this.player.width/2, this.player.y - 3, 4, 0, Math.PI * 2);
-        this.ctx.fill();
-        
-        // Arms
-        this.ctx.fillRect(this.player.x - 2, this.player.y + 3, 3, 6);
-        this.ctx.fillRect(this.player.x + this.player.width - 1, this.player.y + 3, 3, 6);
-        
-        // Legs
-        this.ctx.fillRect(this.player.x + 1, this.player.y + this.player.height, 2, 6);
-        this.ctx.fillRect(this.player.x + this.player.width - 3, this.player.y + this.player.height, 2, 6);
-    }
-    
-    drawObstacles() {
-        this.ctx.fillStyle = '#ef4444';
-        this.obstacles.forEach(obstacle => {
-            this.ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-        });
-    }
-    
-    drawGround() {
-        this.ctx.fillStyle = '#374151';
-        this.ctx.fillRect(0, this.groundY, this.width, this.height - this.groundY);
-    }
-    
-    drawScore() {
-        this.ctx.fillStyle = '#e5e7eb';
-        this.ctx.font = '12px Inter';
-        this.ctx.textAlign = 'right';
-        this.ctx.fillText(`Score: ${this.score}`, this.width - 10, 15);
-    }
-    
-    drawStartScreen() {
-        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-        this.ctx.fillRect(0, 0, this.width, this.height);
-        
-        this.ctx.fillStyle = '#60a5fa';
-        this.ctx.font = '10px Inter';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('Click to Start!', this.width/2, this.height/2);
-        this.ctx.fillText('Space to Jump', this.width/2, this.height/2 + 12);
-    }
-    
-    drawGameOver() {
-        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-        this.ctx.fillRect(0, 0, this.width, this.height);
-        
-        this.ctx.fillStyle = '#ef4444';
-        this.ctx.font = '10px Inter';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText(`Game Over!`, this.width/2, this.height/2 - 5);
-        this.ctx.fillText(`Score: ${this.score}`, this.width/2, this.height/2 + 5);
-        this.ctx.fillText('Click to restart', this.width/2, this.height/2 + 15);
-    }
-    
-    animate() {
-        if (!this.gameRunning) return;
-        
-        // Clear canvas
-        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
-        this.ctx.fillRect(0, 0, this.width, this.height);
-        
-        // Update game objects
-        this.updatePlayer();
-        this.updateObstacles();
-        this.checkCollisions();
-        
-        // Update score
-        this.score++;
-        
-        // Increase game speed
-        if (this.score % 100 === 0) {
-            this.gameSpeed += 0.2;
-        }
-        
-        // Draw everything
-        this.drawGround();
-        this.drawObstacles();
-        this.drawPlayer();
-        this.drawScore();
-        
         requestAnimationFrame(() => this.animate());
     }
 }
@@ -515,38 +230,27 @@ class StickFigureRunner {
 // Initialize flow field when page loads
 document.addEventListener('DOMContentLoaded', () => {
     new FlowField();
-    
-    // Initialize navigation game only if canvas exists
-    const navGameCanvas = document.getElementById('navGame');
-    if (navGameCanvas) {
-        new StickFigureRunner();
-    }
 });
 
 // Mobile Navigation Toggle
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-}
+hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+});
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    if (hamburger && navMenu) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-    }
+    hamburger.classList.remove('active');
+    navMenu.classList.remove('active');
 }));
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
             target.scrollIntoView({
