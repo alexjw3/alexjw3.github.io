@@ -54,6 +54,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
 }
 
 .nav-logo a {
@@ -62,6 +63,7 @@ body {
     color: #60a5fa;
     text-decoration: none;
     transition: color 0.3s ease;
+    white-space: nowrap;
 }
 
 .nav-logo a:hover {
@@ -72,6 +74,8 @@ body {
     display: flex;
     list-style: none;
     gap: 2rem;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-link {
@@ -80,6 +84,7 @@ body {
     font-weight: 500;
     transition: color 0.3s ease;
     position: relative;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -99,6 +104,29 @@ body {
 
 .nav-link:hover::after {
     width: 100%;
+}
+
+.nav-game {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    transition: all 0.3s ease;
+}
+
+.nav-game:hover {
+    border-color: rgba(96, 165, 250, 0.4);
+    background: rgba(30, 41, 59, 0.5);
+}
+
+.nav-game-canvas {
+    border-radius: 4px;
+    cursor: pointer;
+    background: rgba(15, 23, 42, 0.8);
+    display: block;
 }
 
 .hamburger {
@@ -628,6 +656,10 @@ section {
 
     .nav-menu.active {
         left: 0;
+    }
+
+    .nav-game {
+        display: none; /* Hide game on mobile */
     }
 
     .hero-container {

@@ -219,9 +219,237 @@ class FlowField {
     }
 }
 
+// Stick Figure Runner Game
+class StickFigureRunner {
+    constructor() {
+        this.canvas = document.getElementById('navGame');
+        this.ctx = this.canvas.getContext('2d');
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+        
+        // Game state
+        this.gameRunning = false;
+        this.score = 0;
+        this.gameSpeed = 2;
+        
+        // Player
+        this.player = {
+            x: 30,
+            y: this.height - 15,
+            width: 8,
+            height: 15,
+            velocityY: 0,
+            isJumping: false,
+            jumpPower: -8,
+            gravity: 0.5
+        };
+        
+        // Obstacles
+        this.obstacles = [];
+        this.obstacleTimer = 0;
+        this.obstacleInterval = 60;
+        
+        // Ground
+        this.groundY = this.height - 5;
+        
+        this.init();
+    }
+    
+    init() {
+        // Start game on click
+        this.canvas.addEventListener('click', () => {
+            if (!this.gameRunning) {
+                this.startGame();
+            } else {
+                this.jump();
+            }
+        });
+        
+        // Start game on spacebar
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (!this.gameRunning) {
+                    this.startGame();
+                } else {
+                    this.jump();
+                }
+            }
+        });
+        
+        // Draw initial screen
+        this.drawStartScreen();
+    }
+    
+    startGame() {
+        this.gameRunning = true;
+        this.score = 0;
+        this.obstacles = [];
+        this.obstacleTimer = 0;
+        this.gameSpeed = 2;
+        this.player.x = 30;
+        this.player.y = this.height - 15;
+        this.player.velocityY = 0;
+        this.player.isJumping = false;
+        this.animate();
+    }
+    
+    jump() {
+        if (!this.player.isJumping) {
+            this.player.velocityY = this.player.jumpPower;
+            this.player.isJumping = true;
+        }
+    }
+    
+    updatePlayer() {
+        // Apply gravity
+        this.player.velocityY += this.player.gravity;
+        this.player.y += this.player.velocityY;
+        
+        // Ground collision
+        if (this.player.y >= this.groundY - this.player.height) {
+            this.player.y = this.groundY - this.player.height;
+            this.player.velocityY = 0;
+            this.player.isJumping = false;
+        }
+    }
+    
+    updateObstacles() {
+        this.obstacleTimer++;
+        
+        // Create new obstacles
+        if (this.obstacleTimer > this.obstacleInterval) {
+            this.obstacles.push({
+                x: this.width,
+                y: this.groundY - 10,
+                width: 8,
+                height: 10
+            });
+            this.obstacleTimer = 0;
+            this.obstacleInterval = Math.max(30, this.obstacleInterval - 1);
+        }
+        
+        // Move obstacles
+        this.obstacles.forEach(obstacle => {
+            obstacle.x -= this.gameSpeed;
+        });
+        
+        // Remove off-screen obstacles
+        this.obstacles = this.obstacles.filter(obstacle => obstacle.x > -obstacle.width);
+    }
+    
+    checkCollisions() {
+        this.obstacles.forEach(obstacle => {
+            if (this.player.x < obstacle.x + obstacle.width &&
+                this.player.x + this.player.width > obstacle.x &&
+                this.player.y < obstacle.y + obstacle.height &&
+                this.player.y + this.player.height > obstacle.y) {
+                this.gameOver();
+            }
+        });
+    }
+    
+    gameOver() {
+        this.gameRunning = false;
+        this.drawGameOver();
+    }
+    
+    drawPlayer() {
+        this.ctx.fillStyle = '#60a5fa';
+        
+        // Body
+        this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
+        
+        // Head
+        this.ctx.beginPath();
+        this.ctx.arc(this.player.x + this.player.width/2, this.player.y - 3, 4, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Arms
+        this.ctx.fillRect(this.player.x - 2, this.player.y + 3, 3, 6);
+        this.ctx.fillRect(this.player.x + this.player.width - 1, this.player.y + 3, 3, 6);
+        
+        // Legs
+        this.ctx.fillRect(this.player.x + 1, this.player.y + this.player.height, 2, 6);
+        this.ctx.fillRect(this.player.x + this.player.width - 3, this.player.y + this.player.height, 2, 6);
+    }
+    
+    drawObstacles() {
+        this.ctx.fillStyle = '#ef4444';
+        this.obstacles.forEach(obstacle => {
+            this.ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        });
+    }
+    
+    drawGround() {
+        this.ctx.fillStyle = '#374151';
+        this.ctx.fillRect(0, this.groundY, this.width, this.height - this.groundY);
+    }
+    
+    drawScore() {
+        this.ctx.fillStyle = '#e5e7eb';
+        this.ctx.font = '12px Inter';
+        this.ctx.textAlign = 'right';
+        this.ctx.fillText(`Score: ${this.score}`, this.width - 10, 15);
+    }
+    
+    drawStartScreen() {
+        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        this.ctx.fillRect(0, 0, this.width, this.height);
+        
+        this.ctx.fillStyle = '#60a5fa';
+        this.ctx.font = '10px Inter';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('Click to Start!', this.width/2, this.height/2);
+        this.ctx.fillText('Space to Jump', this.width/2, this.height/2 + 12);
+    }
+    
+    drawGameOver() {
+        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        this.ctx.fillRect(0, 0, this.width, this.height);
+        
+        this.ctx.fillStyle = '#ef4444';
+        this.ctx.font = '10px Inter';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(`Game Over!`, this.width/2, this.height/2 - 5);
+        this.ctx.fillText(`Score: ${this.score}`, this.width/2, this.height/2 + 5);
+        this.ctx.fillText('Click to restart', this.width/2, this.height/2 + 15);
+    }
+    
+    animate() {
+        if (!this.gameRunning) return;
+        
+        // Clear canvas
+        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        this.ctx.fillRect(0, 0, this.width, this.height);
+        
+        // Update game objects
+        this.updatePlayer();
+        this.updateObstacles();
+        this.checkCollisions();
+        
+        // Update score
+        this.score++;
+        
+        // Increase game speed
+        if (this.score % 100 === 0) {
+            this.gameSpeed += 0.2;
+        }
+        
+        // Draw everything
+        this.drawGround();
+        this.drawObstacles();
+        this.drawPlayer();
+        this.drawScore();
+        
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
 // Initialize flow field when page loads
 document.addEventListener('DOMContentLoaded', () => {
     new FlowField();
+    new StickFigureRunner();
 });
 
 // Mobile Navigation Toggle
