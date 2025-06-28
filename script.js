@@ -1,4 +1,4 @@
-// Flow Field Animation with Fish-like Particles
+// Flow Field Animation with Abstract Fish
 class FlowField {
     constructor() {
         this.canvas = document.getElementById('flowField');
@@ -63,29 +63,19 @@ class FlowField {
                 vy: 0,
                 life: Math.random() * 0.3 + 0.7,
                 maxLife: Math.random() * 0.3 + 0.7,
-                size: Math.random() * 6 + 4, // Larger fish
+                size: Math.random() * 8 + 6, // Larger fish
                 // Bright, lush fish colors
                 color: this.getFishColor(),
-                // Enhanced fish-like properties
-                tailAngle: 0,
-                tailSpeed: Math.random() * 0.2 + 0.1,
+                // Simple fish properties
                 direction: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.8 + 0.6, // Faster fish
-                schoolRadius: Math.random() * 80 + 60,
+                speed: Math.random() * 0.8 + 0.6,
                 // Fish personality
                 personality: Math.random(),
-                finAngle: 0,
-                finSpeed: Math.random() * 0.25 + 0.15,
-                // New fish properties
-                bodyLength: Math.random() * 0.4 + 0.8,
-                finSize: Math.random() * 0.3 + 0.7,
-                tailSize: Math.random() * 0.4 + 0.8,
-                eyeSize: Math.random() * 0.2 + 0.3,
-                // Glow effect
-                glow: Math.random() * 0.3 + 0.7,
-                // Swimming pattern
-                swimPattern: Math.random(),
-                patternOffset: Math.random() * Math.PI * 2
+                // Simple animation
+                wiggle: 0,
+                wiggleSpeed: Math.random() * 0.1 + 0.05,
+                // Abstract shape type
+                shapeType: Math.floor(Math.random() * 3) // 0: teardrop, 1: oval, 2: triangle
             });
         }
     }
@@ -148,9 +138,8 @@ class FlowField {
     
     updateParticles() {
         this.particles.forEach(particle => {
-            // Update animations
-            particle.tailAngle += particle.tailSpeed;
-            particle.finAngle += particle.finSpeed;
+            // Update simple animation
+            particle.wiggle += particle.wiggleSpeed;
             
             // Calculate distance to mouse
             const dx = this.mouse.x - particle.x;
@@ -160,29 +149,25 @@ class FlowField {
             let targetAngle = particle.direction;
             
             if (this.isMouseActive && distance < this.mouse.radius) {
-                // Enhanced fish behavior: flee but encircle with personality
+                // Simple flee behavior
                 if (distance < 30) {
-                    // Flee directly away from mouse
                     targetAngle = Math.atan2(-dy, -dx);
                 } else {
-                    // Encircle the mouse with personality-based variation
                     const circleAngle = Math.atan2(dy, dx) + Math.PI / 2;
                     const fleeAngle = Math.atan2(-dy, -dx);
                     const personalityFactor = (particle.personality - 0.5) * 0.6;
                     targetAngle = (circleAngle + fleeAngle) / 2 + personalityFactor;
                 }
                 
-                // Add some randomness to make it more natural
                 targetAngle += (Math.random() - 0.5) * 0.4;
             } else {
-                // Normal flow field behavior with personality and swimming pattern
+                // Normal flow field behavior
                 const col = Math.floor(particle.x / this.fieldSize);
                 const row = Math.floor(particle.y / this.fieldSize);
                 
                 if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
                     const fieldAngle = this.flowField[row][col];
-                    const patternAngle = Math.sin(this.time * 0.5 + particle.patternOffset) * 0.3;
-                    targetAngle = fieldAngle + (particle.personality - 0.5) * 0.3 + patternAngle;
+                    targetAngle = fieldAngle + (particle.personality - 0.5) * 0.3;
                 }
             }
             
@@ -204,13 +189,13 @@ class FlowField {
             if (particle.y > this.canvas.height) particle.y = 0;
             
             // Update life
-            particle.life -= 0.0005; // Much slower life decay
+            particle.life -= 0.0005;
             if (particle.life <= 0) {
                 particle.x = Math.random() * this.canvas.width;
                 particle.y = Math.random() * this.canvas.height;
                 particle.life = particle.maxLife;
                 particle.direction = Math.random() * Math.PI * 2;
-                particle.color = this.getFishColor(); // New color on respawn
+                particle.color = this.getFishColor();
             }
         });
     }
@@ -221,103 +206,45 @@ class FlowField {
         const y = particle.y;
         const size = particle.size;
         const direction = particle.direction;
+        const wiggle = Math.sin(particle.wiggle) * 0.1;
         
         ctx.save();
         ctx.translate(x, y);
-        ctx.rotate(direction);
+        ctx.rotate(direction + wiggle);
         
-        // Fish glow effect
+        // Simple glow effect
         ctx.shadowColor = particle.color;
-        ctx.shadowBlur = size * particle.glow;
+        ctx.shadowBlur = size * 0.5;
         
-        // Fish body (main part)
-        const bodyLength = size * particle.bodyLength;
-        const bodyHeight = size * 0.6;
-        
-        // Main body
-        ctx.fillStyle = particle.color;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, bodyLength, bodyHeight, 0, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Fish tail
-        const tailLength = size * particle.tailSize;
-        const tailWidth = size * 0.4;
-        const tailAngle = Math.sin(particle.tailAngle) * 0.3;
-        
-        ctx.save();
-        ctx.translate(-bodyLength, 0);
-        ctx.rotate(tailAngle);
-        
-        // Tail fin
-        ctx.fillStyle = this.adjustColor(particle.color, -20);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-tailLength, -tailWidth);
-        ctx.lineTo(-tailLength * 0.8, 0);
-        ctx.lineTo(-tailLength, tailWidth);
-        ctx.closePath();
-        ctx.fill();
-        
-        ctx.restore();
-        
-        // Side fins
-        const finLength = size * particle.finSize;
-        const finAngle = Math.sin(particle.finAngle) * 0.2;
-        
-        // Top fin
-        ctx.save();
-        ctx.translate(0, -bodyHeight * 0.3);
-        ctx.rotate(finAngle);
-        ctx.fillStyle = this.adjustColor(particle.color, -15);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-finLength * 0.5, -finLength);
-        ctx.lineTo(-finLength * 0.3, -finLength * 0.7);
-        ctx.lineTo(0, -finLength * 0.3);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-        
-        // Bottom fin
-        ctx.save();
-        ctx.translate(0, bodyHeight * 0.3);
-        ctx.rotate(-finAngle);
-        ctx.fillStyle = this.adjustColor(particle.color, -15);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-finLength * 0.5, finLength);
-        ctx.lineTo(-finLength * 0.3, finLength * 0.7);
-        ctx.lineTo(0, finLength * 0.3);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-        
-        // Fish eye
-        const eyeSize = size * particle.eyeSize;
-        ctx.fillStyle = 'white';
-        ctx.beginPath();
-        ctx.arc(bodyLength * 0.3, -bodyHeight * 0.2, eyeSize, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Eye pupil
-        ctx.fillStyle = 'black';
-        ctx.beginPath();
-        ctx.arc(bodyLength * 0.3, -bodyHeight * 0.2, eyeSize * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Eye highlight
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.beginPath();
-        ctx.arc(bodyLength * 0.25, -bodyHeight * 0.25, eyeSize * 0.3, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Fish gills
-        ctx.strokeStyle = this.adjustColor(particle.color, -30);
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.arc(bodyLength * 0.1, 0, bodyHeight * 0.4, Math.PI / 2, -Math.PI / 2);
-        ctx.stroke();
+        // Draw abstract fish based on shape type
+        switch (particle.shapeType) {
+            case 0: // Teardrop shape
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.moveTo(size, 0);
+                ctx.quadraticCurveTo(size * 0.5, -size * 0.3, -size * 0.5, -size * 0.2);
+                ctx.quadraticCurveTo(-size, 0, -size * 0.5, size * 0.2);
+                ctx.quadraticCurveTo(size * 0.5, size * 0.3, size, 0);
+                ctx.fill();
+                break;
+                
+            case 1: // Oval shape
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+                
+            case 2: // Triangle shape
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.moveTo(size, 0);
+                ctx.lineTo(-size * 0.5, -size * 0.4);
+                ctx.lineTo(-size * 0.5, size * 0.4);
+                ctx.closePath();
+                ctx.fill();
+                break;
+        }
         
         ctx.restore();
     }
@@ -326,34 +253,14 @@ class FlowField {
         this.bubbles.forEach(bubble => {
             this.ctx.save();
             
-            // Bubble glow
-            this.ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-            this.ctx.shadowBlur = bubble.size * 0.5;
-            
-            // Bubble
+            // Simple bubble
             this.ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity})`;
             this.ctx.beginPath();
             this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
             this.ctx.fill();
             
-            // Bubble highlight
-            this.ctx.fillStyle = `rgba(255, 255, 255, ${bubble.opacity * 0.8})`;
-            this.ctx.beginPath();
-            this.ctx.arc(bubble.x - bubble.size * 0.3, bubble.y - bubble.size * 0.3, bubble.size * 0.4, 0, Math.PI * 2);
-            this.ctx.fill();
-            
             this.ctx.restore();
         });
-    }
-    
-    adjustColor(color, amount) {
-        // Simple color adjustment for fish parts
-        if (color.startsWith('hsl')) {
-            const values = color.match(/hsl\(([^)]+)\)/)[1].split(',').map(v => parseFloat(v.trim()));
-            values[2] = Math.max(0, Math.min(100, values[2] + amount));
-            return `hsl(${values[0]}, ${values[1]}%, ${values[2]}%)`;
-        }
-        return color;
     }
     
     draw() {
@@ -608,28 +515,38 @@ class StickFigureRunner {
 // Initialize flow field when page loads
 document.addEventListener('DOMContentLoaded', () => {
     new FlowField();
-    new StickFigureRunner();
+    
+    // Initialize navigation game only if canvas exists
+    const navGameCanvas = document.getElementById('navGame');
+    if (navGameCanvas) {
+        new StickFigureRunner();
+    }
 });
 
 // Mobile Navigation Toggle
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
+    if (hamburger && navMenu) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    }
 }));
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
+        
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
             target.scrollIntoView({
