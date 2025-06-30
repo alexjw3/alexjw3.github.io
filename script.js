@@ -1,17 +1,13 @@
-// Flow Field Animation with Fish-like Particles
+// Flow Field Animation with Wandering Fish
 class FlowField {
     constructor() {
         this.canvas = document.getElementById('flowField');
         this.ctx = this.canvas.getContext('2d');
         this.particles = [];
-        this.flowField = [];
         this.fieldSize = 15;
         this.cols = 0;
         this.rows = 0;
         this.time = 0;
-        this.mouse = { x: 0, y: 0, radius: 100 };
-        this.isMouseActive = false;
-        
         this.init();
         this.createParticles();
         this.animate();
@@ -20,173 +16,83 @@ class FlowField {
     init() {
         this.resize();
         window.addEventListener('resize', () => this.resize());
-        
-        // Mouse tracking
-        this.canvas.addEventListener('mousemove', (e) => {
-            this.mouse.x = e.clientX;
-            this.mouse.y = e.clientY;
-            this.isMouseActive = true;
-        });
-        
-        this.canvas.addEventListener('mouseleave', () => {
-            this.isMouseActive = false;
-        });
     }
     
     resize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        
         this.cols = Math.floor(this.canvas.width / this.fieldSize);
         this.rows = Math.floor(this.canvas.height / this.fieldSize);
-        
-        this.flowField = [];
-        for (let y = 0; y < this.rows; y++) {
-            this.flowField[y] = [];
-            for (let x = 0; x < this.cols; x++) {
-                this.flowField[y][x] = 0;
-            }
-        }
     }
     
     createParticles() {
-        // Increase particle count for more concentration
         const particleCount = Math.floor((this.canvas.width * this.canvas.height) / 8000);
-        
         for (let i = 0; i < particleCount; i++) {
             this.particles.push({
                 x: Math.random() * this.canvas.width,
                 y: Math.random() * this.canvas.height,
-                vx: 0,
-                vy: 0,
-                // Remove life cycle - fish are permanent
-                size: Math.random() * 2.5 + 1.5, // Slightly smaller fish
-                color: `hsl(${20 + Math.random() * 30}, 90%, ${50 + Math.random() * 20}%)`, // Orange fish
-                // Fish-like properties
+                vx: (Math.random() - 0.5) * 0.7,
+                vy: (Math.random() - 0.5) * 0.7,
+                size: Math.random() * 2.5 + 1.5,
+                color: `hsl(${20 + Math.random() * 30}, 90%, ${50 + Math.random() * 20}%)`,
                 tailAngle: 0,
-                tailSpeed: Math.random() * 0.08 + 0.04, // Slower tail animation
-                direction: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.3 + 0.2, // Slower base speed
-                // Enhanced dynamics
-                fearLevel: 0,
-                maxFearLevel: 1,
-                recoveryRate: Math.random() * 0.02 + 0.01
+                tailSpeed: Math.random() * 0.08 + 0.04
             });
-        }
-    }
-    
-    updateFlowField() {
-        for (let y = 0; y < this.rows; y++) {
-            for (let x = 0; x < this.cols; x++) {
-                // Create more organic, flowing patterns
-                const angle = (Math.sin(x * 0.015 + this.time * 0.5) + 
-                              Math.cos(y * 0.015 + this.time * 0.3) + 
-                              Math.sin((x + y) * 0.01 + this.time * 0.7)) * Math.PI * 0.5;
-                this.flowField[y][x] = angle;
-            }
         }
     }
     
     updateParticles() {
         this.particles.forEach(particle => {
-            // Calculate distance to mouse
-            const dx = this.mouse.x - particle.x;
-            const dy = this.mouse.y - particle.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            // Enhanced mouse interaction with fear levels
-            if (this.isMouseActive && distance < this.mouse.radius) {
-                // Calculate fear level based on distance (closer = more fear)
-                const fearIntensity = Math.max(0, 1 - (distance / this.mouse.radius));
-                particle.fearLevel = Math.min(particle.maxFearLevel, particle.fearLevel + fearIntensity * 0.1);
-                
-                // Enhanced flee behavior with multiple forces
-                const fleeForce = 2 * particle.fearLevel; // Reduced flee force for slower movement
-                const circleForce = 1 * particle.fearLevel; // Reduced circle force
-                const escapeForce = 1.5 * particle.fearLevel; // Reduced escape force
-                
-                // Primary flee force (away from mouse)
-                const fleeAngle = Math.atan2(dy, dx) + Math.PI;
-                particle.vx += Math.cos(fleeAngle) * fleeForce;
-                particle.vy += Math.sin(fleeAngle) * fleeForce;
-                
-                // Circle force (perpendicular to flee direction) - creates encircling
-                const circleAngle = fleeAngle + Math.PI / 2;
-                particle.vx += Math.cos(circleAngle) * circleForce;
-                particle.vy += Math.sin(circleAngle) * circleForce;
-                
-                // Escape force (random direction for more natural movement)
-                const escapeAngle = Math.atan2(dy, dx) + Math.PI + (Math.random() - 0.5) * Math.PI;
-                particle.vx += Math.cos(escapeAngle) * escapeForce;
-                particle.vy += Math.sin(escapeAngle) * escapeForce;
-                
-                // Add panic behavior when very close
-                if (distance < this.mouse.radius * 0.3) {
-                    const panicForce = 2.5 * particle.fearLevel; // Reduced panic force
-                    particle.vx += (Math.random() - 0.5) * panicForce;
-                    particle.vy += (Math.random() - 0.5) * panicForce;
-                }
-                
-                // Increase speed when fleeing (but not too much)
-                particle.speed = Math.min(1.2, particle.speed + 0.05);
-                
-            } else {
-                // Normal flow field behavior when not near mouse
-                const col = Math.floor(particle.x / this.fieldSize);
-                const row = Math.floor(particle.y / this.fieldSize);
-                
-                if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
-                    const angle = this.flowField[row][col];
-                    const force = 0.2; // Even slower movement
-                    
-                    particle.vx += Math.cos(angle) * force;
-                    particle.vy += Math.sin(angle) * force;
-                }
-                
-                // Gradually recover from fear and return to normal speed
-                particle.fearLevel = Math.max(0, particle.fearLevel - particle.recoveryRate);
-                particle.speed = Math.max(0.2, particle.speed - 0.01); // Slower recovery
+            // Random wandering
+            if (Math.random() < 0.02) {
+                particle.vx += (Math.random() - 0.5) * 0.1;
+                particle.vy += (Math.random() - 0.5) * 0.1;
             }
-            
-            // Apply velocity with dynamic speed
-            particle.x += particle.vx * particle.speed;
-            particle.y += particle.vy * particle.speed;
-            
-            // Apply friction (less friction when fleeing for more responsive movement)
-            const friction = particle.fearLevel > 0.5 ? 0.95 : 0.98;
-            particle.vx *= friction;
-            particle.vy *= friction;
-            
-            // Wrap around edges
-            if (particle.x < 0) particle.x = this.canvas.width;
-            if (particle.x > this.canvas.width) particle.x = 0;
-            if (particle.y < 0) particle.y = this.canvas.height;
-            if (particle.y > this.canvas.height) particle.y = 0;
-            
-            // Update fish tail animation (faster when fleeing)
-            particle.tailSpeed = particle.fearLevel > 0.5 ? 0.2 : 0.1;
+            // Limit speed
+            const maxSpeed = 0.7;
+            const speed = Math.sqrt(particle.vx * particle.vx + particle.vy * particle.vy);
+            if (speed > maxSpeed) {
+                particle.vx *= maxSpeed / speed;
+                particle.vy *= maxSpeed / speed;
+            }
+            // Move
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            // Bounce off edges
+            if (particle.x < 0) {
+                particle.x = 0;
+                particle.vx *= -1;
+            }
+            if (particle.x > this.canvas.width) {
+                particle.x = this.canvas.width;
+                particle.vx *= -1;
+            }
+            if (particle.y < 0) {
+                particle.y = 0;
+                particle.vy *= -1;
+            }
+            if (particle.y > this.canvas.height) {
+                particle.y = this.canvas.height;
+                particle.vy *= -1;
+            }
+            // Animate tail
             particle.tailAngle += particle.tailSpeed;
         });
     }
     
     drawFish(particle) {
         this.ctx.save();
-        this.ctx.globalAlpha = 0.9; // Permanent visibility with slight transparency
+        this.ctx.globalAlpha = 0.9;
         this.ctx.fillStyle = particle.color;
-        
         // Calculate fish direction
         const angle = Math.atan2(particle.vy, particle.vx);
-        
-        // Draw fish body
         this.ctx.save();
         this.ctx.translate(particle.x, particle.y);
         this.ctx.rotate(angle);
-        
         // Fish body (oval)
         this.ctx.beginPath();
         this.ctx.ellipse(0, 0, particle.size * 1.5, particle.size * 0.8, 0, 0, Math.PI * 2);
         this.ctx.fill();
-        
         // Fish tail
         this.ctx.beginPath();
         this.ctx.moveTo(-particle.size * 1.5, 0);
@@ -195,73 +101,36 @@ class FlowField {
         this.ctx.lineTo(-particle.size * 2.5, particle.size * 0.8);
         this.ctx.closePath();
         this.ctx.fill();
-        
         // Fish eye
         this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
         this.ctx.beginPath();
         this.ctx.arc(particle.size * 0.5, -particle.size * 0.2, particle.size * 0.2, 0, Math.PI * 2);
         this.ctx.fill();
-        
         // Fish pupil
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.ctx.beginPath();
         this.ctx.arc(particle.size * 0.6, -particle.size * 0.2, particle.size * 0.1, 0, Math.PI * 2);
         this.ctx.fill();
-        
         this.ctx.restore();
         this.ctx.restore();
     }
     
     draw() {
-        this.ctx.fillStyle = 'rgba(26, 26, 46, 0.01)'; // Much smaller trails
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
+        // No trails: clear the canvas every frame
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         // Draw fish particles
         this.particles.forEach(particle => {
             this.drawFish(particle);
         });
-        
-        // Draw enhanced mouse influence area
-        if (this.isMouseActive) {
-            this.ctx.save();
-            
-            // Outer ring (subtle)
-            this.ctx.globalAlpha = 0.05;
-            this.ctx.strokeStyle = '#ff6b35';
-            this.ctx.lineWidth = 3;
-            this.ctx.beginPath();
-            this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius, 0, Math.PI * 2);
-            this.ctx.stroke();
-            
-            // Inner ring (more visible)
-            this.ctx.globalAlpha = 0.15;
-            this.ctx.strokeStyle = '#ff6b35';
-            this.ctx.lineWidth = 2;
-            this.ctx.beginPath();
-            this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius * 0.3, 0, Math.PI * 2);
-            this.ctx.stroke();
-            
-            // Center dot
-            this.ctx.globalAlpha = 0.3;
-            this.ctx.fillStyle = '#ff6b35';
-            this.ctx.beginPath();
-            this.ctx.arc(this.mouse.x, this.mouse.y, 3, 0, Math.PI * 2);
-            this.ctx.fill();
-            
-            this.ctx.restore();
-        }
     }
     
     animate() {
-        this.time += 0.005; // Slower time progression
-        this.updateFlowField();
         this.updateParticles();
         this.draw();
         requestAnimationFrame(() => this.animate());
     }
 }
 
-// Initialize flow field when page loads
 document.addEventListener('DOMContentLoaded', () => {
     new FlowField();
 });
