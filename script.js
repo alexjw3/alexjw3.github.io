@@ -62,12 +62,16 @@ class FlowField {
                 life: Math.random() * 0.3 + 0.7,
                 maxLife: Math.random() * 0.3 + 0.7,
                 size: Math.random() * 3 + 2,
-                color: `hsl(${180 + Math.random() * 40}, 80%, ${50 + Math.random() * 30}%)`,
+                color: `hsl(${20 + Math.random() * 30}, 90%, ${50 + Math.random() * 20}%)`, // Orange fish
                 // Fish-like properties
                 tailAngle: 0,
                 tailSpeed: Math.random() * 0.1 + 0.05,
                 direction: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.5 + 0.3
+                speed: Math.random() * 0.5 + 0.3,
+                // Enhanced dynamics
+                fearLevel: 0,
+                maxFearLevel: 1,
+                recoveryRate: Math.random() * 0.02 + 0.01
             });
         }
     }
@@ -91,26 +95,44 @@ class FlowField {
             const dy = this.mouse.y - particle.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
+            // Enhanced mouse interaction with fear levels
             if (this.isMouseActive && distance < this.mouse.radius) {
-                // Fish flee from mouse but encircle it
-                const fleeForce = 2;
-                const circleForce = 1;
+                // Calculate fear level based on distance (closer = more fear)
+                const fearIntensity = Math.max(0, 1 - (distance / this.mouse.radius));
+                particle.fearLevel = Math.min(particle.maxFearLevel, particle.fearLevel + fearIntensity * 0.1);
                 
-                // Flee force (away from mouse)
+                // Enhanced flee behavior with multiple forces
+                const fleeForce = 3 * particle.fearLevel; // Stronger flee force
+                const circleForce = 1.5 * particle.fearLevel; // Moderate circle force
+                const escapeForce = 2 * particle.fearLevel; // Additional escape force
+                
+                // Primary flee force (away from mouse)
                 const fleeAngle = Math.atan2(dy, dx) + Math.PI;
                 particle.vx += Math.cos(fleeAngle) * fleeForce;
                 particle.vy += Math.sin(fleeAngle) * fleeForce;
                 
-                // Circle force (perpendicular to flee direction)
+                // Circle force (perpendicular to flee direction) - creates encircling
                 const circleAngle = fleeAngle + Math.PI / 2;
                 particle.vx += Math.cos(circleAngle) * circleForce;
                 particle.vy += Math.sin(circleAngle) * circleForce;
                 
-                // Add some randomness to make it more natural
-                particle.vx += (Math.random() - 0.5) * 0.5;
-                particle.vy += (Math.random() - 0.5) * 0.5;
+                // Escape force (random direction for more natural movement)
+                const escapeAngle = Math.atan2(dy, dx) + Math.PI + (Math.random() - 0.5) * Math.PI;
+                particle.vx += Math.cos(escapeAngle) * escapeForce;
+                particle.vy += Math.sin(escapeAngle) * escapeForce;
+                
+                // Add panic behavior when very close
+                if (distance < this.mouse.radius * 0.3) {
+                    const panicForce = 4 * particle.fearLevel;
+                    particle.vx += (Math.random() - 0.5) * panicForce;
+                    particle.vy += (Math.random() - 0.5) * panicForce;
+                }
+                
+                // Increase speed when fleeing
+                particle.speed = Math.min(1.5, particle.speed + 0.1);
+                
             } else {
-                // Normal flow field behavior
+                // Normal flow field behavior when not near mouse
                 const col = Math.floor(particle.x / this.fieldSize);
                 const row = Math.floor(particle.y / this.fieldSize);
                 
@@ -121,15 +143,20 @@ class FlowField {
                     particle.vx += Math.cos(angle) * force;
                     particle.vy += Math.sin(angle) * force;
                 }
+                
+                // Gradually recover from fear and return to normal speed
+                particle.fearLevel = Math.max(0, particle.fearLevel - particle.recoveryRate);
+                particle.speed = Math.max(0.3, particle.speed - 0.02);
             }
             
-            // Apply velocity with slower movement
+            // Apply velocity with dynamic speed
             particle.x += particle.vx * particle.speed;
             particle.y += particle.vy * particle.speed;
             
-            // Apply friction
-            particle.vx *= 0.98;
-            particle.vy *= 0.98;
+            // Apply friction (less friction when fleeing for more responsive movement)
+            const friction = particle.fearLevel > 0.5 ? 0.95 : 0.98;
+            particle.vx *= friction;
+            particle.vy *= friction;
             
             // Wrap around edges
             if (particle.x < 0) particle.x = this.canvas.width;
@@ -137,7 +164,8 @@ class FlowField {
             if (particle.y < 0) particle.y = this.canvas.height;
             if (particle.y > this.canvas.height) particle.y = 0;
             
-            // Update fish tail animation
+            // Update fish tail animation (faster when fleeing)
+            particle.tailSpeed = particle.fearLevel > 0.5 ? 0.2 : 0.1;
             particle.tailAngle += particle.tailSpeed;
             
             // Update life
@@ -148,6 +176,8 @@ class FlowField {
                 particle.life = particle.maxLife;
                 particle.vx = 0;
                 particle.vy = 0;
+                particle.fearLevel = 0;
+                particle.speed = Math.random() * 0.5 + 0.3;
             }
         });
     }
@@ -197,7 +227,7 @@ class FlowField {
     }
     
     draw() {
-        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+        this.ctx.fillStyle = 'rgba(26, 26, 46, 0.03)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Draw fish particles
@@ -205,15 +235,33 @@ class FlowField {
             this.drawFish(particle);
         });
         
-        // Draw subtle mouse influence area
+        // Draw enhanced mouse influence area
         if (this.isMouseActive) {
             this.ctx.save();
-            this.ctx.globalAlpha = 0.1;
-            this.ctx.strokeStyle = '#60a5fa';
-            this.ctx.lineWidth = 2;
+            
+            // Outer ring (subtle)
+            this.ctx.globalAlpha = 0.05;
+            this.ctx.strokeStyle = '#ff6b35';
+            this.ctx.lineWidth = 3;
             this.ctx.beginPath();
             this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius, 0, Math.PI * 2);
             this.ctx.stroke();
+            
+            // Inner ring (more visible)
+            this.ctx.globalAlpha = 0.15;
+            this.ctx.strokeStyle = '#ff6b35';
+            this.ctx.lineWidth = 2;
+            this.ctx.beginPath();
+            this.ctx.arc(this.mouse.x, this.mouse.y, this.mouse.radius * 0.3, 0, Math.PI * 2);
+            this.ctx.stroke();
+            
+            // Center dot
+            this.ctx.globalAlpha = 0.3;
+            this.ctx.fillStyle = '#ff6b35';
+            this.ctx.beginPath();
+            this.ctx.arc(this.mouse.x, this.mouse.y, 3, 0, Math.PI * 2);
+            this.ctx.fill();
+            
             this.ctx.restore();
         }
     }
@@ -265,10 +313,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(10, 10, 10, 0.95)';
+        navbar.style.background = 'rgba(26, 26, 46, 0.95)';
         navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.4)';
     } else {
-        navbar.style.background = 'rgba(10, 10, 10, 0.8)';
+        navbar.style.background = 'rgba(26, 26, 46, 0.8)';
         navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
     }
 });
@@ -473,4 +521,4 @@ function setActiveNavItem() {
     });
 }
 
-window.addEventListener('scroll', setActiveNavItem); 
+window.addEventListener('scroll', setActiveNavItem);
