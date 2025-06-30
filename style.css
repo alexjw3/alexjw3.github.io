@@ -12,7 +12,7 @@ html {
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
-    color: #222;
+    color: #181818;
     background-color: #f3f4f6;
     overflow-x: hidden;
 }
@@ -76,7 +76,7 @@ body {
 
 .nav-link {
     text-decoration: none;
-    color: #222;
+    color: #181818;
     font-weight: 500;
     transition: color 0.3s ease;
     position: relative;
@@ -120,7 +120,7 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    color: #222;
+    color: #181818;
     padding-top: 80px;
     position: relative;
     background: transparent;
@@ -173,7 +173,7 @@ body {
 .hero-description {
     font-size: 1.1rem;
     margin-bottom: 2rem;
-    color: #555;
+    color: #333;
     line-height: 1.7;
 }
 
@@ -228,13 +228,13 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #222;
+    background: linear-gradient(135deg, #fbbf24, #f97316);
+    color: #181818;
     box-shadow: 0 4px 15px rgba(251, 191, 36, 0.08);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #f97316, #ea580c);
     color: #fff;
 }
 
@@ -268,6 +268,18 @@ body {
     border: 3px solid rgba(96, 165, 250, 0.2);
     backdrop-filter: blur(10px);
     box-shadow: 0 0 50px rgba(96, 165, 250, 0.2);
+}
+
+.profile-headshot {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #f97316;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    background: #fff;
+    display: block;
+    margin: 0 auto;
 }
 
 /* Section Styles */
@@ -320,13 +332,13 @@ section {
 .stat h3 {
     font-size: 2rem;
     font-weight: 700;
-    color: #60a5fa;
+    color: #f97316;
     margin-bottom: 0.5rem;
     text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
 }
 
 .stat p {
-    color: #94a3b8;
+    color: #555;
     font-weight: 500;
 }
 
@@ -352,9 +364,9 @@ section {
 
 .skill-category {
     background: #fff;
-    color: #222;
+    color: #181818;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    border: 1px solid #e5e7eb;
+    border: 1px solid #f97316;
     padding: 2rem;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -371,7 +383,7 @@ section {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    color: #f8fafc;
+    color: #f97316;
     text-align: center;
 }
 
@@ -386,11 +398,11 @@ section {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem;
-    background: #f3f4f6;
-    color: #222;
+    background: #f9fafb;
+    color: #181818;
     border-radius: 8px;
     transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #f97316;
 }
 
 .skill-item:hover {
@@ -401,12 +413,12 @@ section {
 
 .skill-item i {
     font-size: 1.5rem;
-    color: #60a5fa;
+    color: #f97316;
 }
 
 .skill-item span {
     font-weight: 500;
-    color: #e2e8f0;
+    color: #181818;
 }
 
 /* Projects Section */
@@ -423,9 +435,9 @@ section {
 
 .project-card {
     background: #fff;
-    color: #222;
+    color: #181818;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    border: 1px solid #e5e7eb;
+    border: 1px solid #f97316;
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.3s ease;
@@ -458,11 +470,11 @@ section {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: #f8fafc;
+    color: #f97316;
 }
 
 .project-content p {
-    color: #cbd5e1;
+    color: #333;
     margin-bottom: 1.5rem;
     line-height: 1.6;
 }
@@ -475,13 +487,13 @@ section {
 }
 
 .project-tech span {
-    background: rgba(96, 165, 250, 0.1);
-    color: #60a5fa;
+    background: #fff7ed;
+    color: #f97316;
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
-    border: 1px solid rgba(96, 165, 250, 0.2);
+    border: 1px solid #f97316;
 }
 
 .project-links {
@@ -491,7 +503,7 @@ section {
 
 .project-link {
     text-decoration: none;
-    color: #60a5fa;
+    color: #f97316;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -500,7 +512,7 @@ section {
 }
 
 .project-link:hover {
-    color: #3b82f6;
+    color: #ea580c;
 }
 
 /* Contact Section */
@@ -514,11 +526,11 @@ section {
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: #f8fafc;
+    color: #f97316;
 }
 
 .contact-info p {
-    color: #cbd5e1;
+    color: #333;
     margin-bottom: 2rem;
     line-height: 1.7;
 }
@@ -535,7 +547,7 @@ section {
 }
 
 .contact-item i {
-    color: #60a5fa;
+    color: #f97316;
     font-size: 1.2rem;
     width: 20px;
 }
@@ -566,9 +578,9 @@ section {
 
 .contact-form {
     background: #fff;
-    color: #222;
+    color: #181818;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    border: 1px solid #e5e7eb;
+    border: 1px solid #f97316;
     padding: 2rem;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -583,8 +595,8 @@ section {
     width: 100%;
     padding: 1rem;
     background: #f9fafb;
-    color: #222;
-    border: 1.5px solid #e5e7eb;
+    color: #181818;
+    border: 1.5px solid #f97316;
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -594,7 +606,7 @@ section {
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #f97316;
+    border-color: #ea580c;
     background: #fff7ed;
 }
 
@@ -614,7 +626,7 @@ section {
     color: #888;
     text-align: center;
     padding: 2rem 0;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #f97316;
 }
 
 /* Responsive Design */
