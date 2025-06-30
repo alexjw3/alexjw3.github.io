@@ -277,8 +277,8 @@ body {
 section {
     padding: 80px 0;
     position: relative;
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(5px);
 }
 
 .section-title {
@@ -292,8 +292,8 @@ section {
 
 /* About Section */
 .about {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
+    background: rgba(15, 23, 42, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .about-content {
@@ -354,13 +354,13 @@ section {
 }
 
 .skill-category {
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(30, 41, 59, 0.3);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
     border: 1px solid rgba(96, 165, 250, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
 }
 
 .skill-category:hover {
@@ -388,7 +388,7 @@ section {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem;
-    background: rgba(51, 65, 85, 0.5);
+    background: rgba(51, 65, 85, 0.3);
     border-radius: 8px;
     transition: all 0.3s ease;
     border: 1px solid rgba(96, 165, 250, 0.1);
@@ -412,8 +412,8 @@ section {
 
 /* Projects Section */
 .projects {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
+    background: rgba(15, 23, 42, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .projects-grid {
@@ -423,13 +423,13 @@ section {
 }
 
 .project-card {
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(30, 41, 59, 0.3);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
     border: 1px solid rgba(96, 165, 250, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
 }
 
 .project-card:hover {
@@ -568,12 +568,12 @@ section {
 }
 
 .contact-form {
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(30, 41, 59, 0.3);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(96, 165, 250, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
 }
 
 .form-group {
@@ -589,7 +589,7 @@ section {
     font-size: 1rem;
     transition: all 0.3s ease;
     font-family: inherit;
-    background: rgba(51, 65, 85, 0.5);
+    background: rgba(51, 65, 85, 0.3);
     color: #f8fafc;
 }
 
@@ -597,7 +597,7 @@ section {
 .form-group textarea:focus {
     outline: none;
     border-color: #60a5fa;
-    background: rgba(51, 65, 85, 0.8);
+    background: rgba(51, 65, 85, 0.5);
     box-shadow: 0 0 20px rgba(96, 165, 250, 0.2);
 }
 
@@ -613,12 +613,12 @@ section {
 
 /* Footer */
 .footer {
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.4);
     color: #cbd5e1;
     text-align: center;
     padding: 2rem 0;
     border-top: 1px solid rgba(96, 165, 250, 0.1);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px);
 }
 
 /* Responsive Design */

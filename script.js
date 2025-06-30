@@ -59,15 +59,14 @@ class FlowField {
                 y: Math.random() * this.canvas.height,
                 vx: 0,
                 vy: 0,
-                life: Math.random() * 0.3 + 0.7,
-                maxLife: Math.random() * 0.3 + 0.7,
-                size: Math.random() * 3 + 2,
+                // Remove life cycle - fish are permanent
+                size: Math.random() * 2.5 + 1.5, // Slightly smaller fish
                 color: `hsl(${20 + Math.random() * 30}, 90%, ${50 + Math.random() * 20}%)`, // Orange fish
                 // Fish-like properties
                 tailAngle: 0,
-                tailSpeed: Math.random() * 0.1 + 0.05,
+                tailSpeed: Math.random() * 0.08 + 0.04, // Slower tail animation
                 direction: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.5 + 0.3,
+                speed: Math.random() * 0.3 + 0.2, // Slower base speed
                 // Enhanced dynamics
                 fearLevel: 0,
                 maxFearLevel: 1,
@@ -102,9 +101,9 @@ class FlowField {
                 particle.fearLevel = Math.min(particle.maxFearLevel, particle.fearLevel + fearIntensity * 0.1);
                 
                 // Enhanced flee behavior with multiple forces
-                const fleeForce = 3 * particle.fearLevel; // Stronger flee force
-                const circleForce = 1.5 * particle.fearLevel; // Moderate circle force
-                const escapeForce = 2 * particle.fearLevel; // Additional escape force
+                const fleeForce = 2 * particle.fearLevel; // Reduced flee force for slower movement
+                const circleForce = 1 * particle.fearLevel; // Reduced circle force
+                const escapeForce = 1.5 * particle.fearLevel; // Reduced escape force
                 
                 // Primary flee force (away from mouse)
                 const fleeAngle = Math.atan2(dy, dx) + Math.PI;
@@ -123,13 +122,13 @@ class FlowField {
                 
                 // Add panic behavior when very close
                 if (distance < this.mouse.radius * 0.3) {
-                    const panicForce = 4 * particle.fearLevel;
+                    const panicForce = 2.5 * particle.fearLevel; // Reduced panic force
                     particle.vx += (Math.random() - 0.5) * panicForce;
                     particle.vy += (Math.random() - 0.5) * panicForce;
                 }
                 
-                // Increase speed when fleeing
-                particle.speed = Math.min(1.5, particle.speed + 0.1);
+                // Increase speed when fleeing (but not too much)
+                particle.speed = Math.min(1.2, particle.speed + 0.05);
                 
             } else {
                 // Normal flow field behavior when not near mouse
@@ -138,7 +137,7 @@ class FlowField {
                 
                 if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
                     const angle = this.flowField[row][col];
-                    const force = 0.3; // Slower movement
+                    const force = 0.2; // Even slower movement
                     
                     particle.vx += Math.cos(angle) * force;
                     particle.vy += Math.sin(angle) * force;
@@ -146,7 +145,7 @@ class FlowField {
                 
                 // Gradually recover from fear and return to normal speed
                 particle.fearLevel = Math.max(0, particle.fearLevel - particle.recoveryRate);
-                particle.speed = Math.max(0.3, particle.speed - 0.02);
+                particle.speed = Math.max(0.2, particle.speed - 0.01); // Slower recovery
             }
             
             // Apply velocity with dynamic speed
@@ -167,25 +166,12 @@ class FlowField {
             // Update fish tail animation (faster when fleeing)
             particle.tailSpeed = particle.fearLevel > 0.5 ? 0.2 : 0.1;
             particle.tailAngle += particle.tailSpeed;
-            
-            // Update life
-            particle.life -= 0.003; // Slower life decay
-            if (particle.life <= 0) {
-                particle.x = Math.random() * this.canvas.width;
-                particle.y = Math.random() * this.canvas.height;
-                particle.life = particle.maxLife;
-                particle.vx = 0;
-                particle.vy = 0;
-                particle.fearLevel = 0;
-                particle.speed = Math.random() * 0.5 + 0.3;
-            }
         });
     }
     
     drawFish(particle) {
-        const alpha = particle.life / particle.maxLife;
         this.ctx.save();
-        this.ctx.globalAlpha = alpha;
+        this.ctx.globalAlpha = 0.9; // Permanent visibility with slight transparency
         this.ctx.fillStyle = particle.color;
         
         // Calculate fish direction
@@ -227,7 +213,7 @@ class FlowField {
     }
     
     draw() {
-        this.ctx.fillStyle = 'rgba(26, 26, 46, 0.03)';
+        this.ctx.fillStyle = 'rgba(26, 26, 46, 0.01)'; // Much smaller trails
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Draw fish particles
