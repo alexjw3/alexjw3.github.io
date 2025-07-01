@@ -39,12 +39,13 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(255,255,255,0.98);
+    background: rgba(255,255,255,0.98) !important;
     backdrop-filter: blur(4px);
     z-index: 1000;
     padding: 1rem 0;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
-    border-bottom: 1px solid #f3f4f6;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03) !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    color: #181818 !important;
 }
 
 .nav-container {
@@ -173,7 +174,7 @@ body {
 .hero-description {
     font-size: 1.1rem;
     margin-bottom: 2rem;
-    color: #333;
+    color: #222;
     line-height: 1.7;
 }
 
@@ -474,7 +475,7 @@ section {
 }
 
 .project-content p {
-    color: #333;
+    color: #222;
     margin-bottom: 1.5rem;
     line-height: 1.6;
 }
@@ -530,7 +531,7 @@ section {
 }
 
 .contact-info p {
-    color: #333;
+    color: #222;
     margin-bottom: 2rem;
     line-height: 1.7;
 }
@@ -709,4 +710,20 @@ section {
         max-width: 250px;
         text-align: center;
     }
+}
+
+.hero-description,
+.project-content p,
+.contact-info p,
+.stat p,
+.skill-item span,
+.contact-item span {
+    color: #222 !important;
+}
+
+.section-title,
+.skill-category h3,
+.project-content h3,
+.contact-info h3 {
+    color: #ea580c;
 }

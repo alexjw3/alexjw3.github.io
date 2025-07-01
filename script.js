@@ -164,18 +164,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar background change on scroll
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(26, 26, 46, 0.95)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.4)';
-    } else {
-        navbar.style.background = 'rgba(26, 26, 46, 0.8)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
-    }
-});
-
 // Active navigation link highlighting
 window.addEventListener('scroll', () => {
     const sections = document.querySelectorAll('section[id]');
