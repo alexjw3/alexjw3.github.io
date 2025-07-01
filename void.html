@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Void | Alex Wang</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #fff 0%, #f3f4f6 100%);
+        }
+        .void-header {
+            text-align: center;
+            margin-top: 80px;
+            margin-bottom: 32px;
+        }
+        .void-title {
+            font-size: 3rem;
+            color: #f97316;
+            letter-spacing: 0.05em;
+            font-weight: 800;
+        }
+        .void-poem {
+            color: #888;
+            font-size: 1.2rem;
+            margin: 24px auto 0 auto;
+            max-width: 600px;
+            font-style: italic;
+        }
+        .void-thoughts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin: 48px auto 0 auto;
+            max-width: 900px;
+        }
+        .thought-card {
+            background: #fff;
+            border: 2px dashed #f97316;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            padding: 2rem 1.5rem;
+            min-width: 260px;
+            max-width: 340px;
+            min-height: 140px;
+            color: #181818;
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: box-shadow 0.2s;
+        }
+        .thought-card:hover {
+            box-shadow: 0 6px 32px rgba(249,115,22,0.08);
+            border-color: #ea580c;
+        }
+        .void-add {
+            display: block;
+            margin: 48px auto 0 auto;
+            text-align: center;
+            color: #f97316;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border: 2px solid #f97316;
+            border-radius: 24px;
+            padding: 0.75rem 2.5rem;
+            background: #fff7ed;
+            transition: background 0.2s, color 0.2s;
+        }
+        .void-add:hover {
+            background: #f97316;
+            color: #fff;
+        }
+        .void-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            color: #f97316;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: #fff7ed;
+            border-radius: 16px;
+            padding: 0.5rem 1.2rem;
+            border: 1.5px solid #f97316;
+            transition: background 0.2s, color 0.2s;
+        }
+        .void-back:hover {
+            background: #f97316;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="void-back">&larr; Back to Portfolio</a>
+    <header class="void-header">
+        <div class="void-title">The Void</div>
+        <div class="void-poem">
+            A space for thoughts, fragments, sketches, and the unfiltered mind.<br>
+            Here, ideas float—unfinished, unjudged, and infinite.<br>
+            Welcome to the void between projects, where anything can exist.
+        </div>
+    </header>
+    <main>
+        <div class="void-thoughts">
+            <div class="thought-card">
+                <div>"What if the best ideas are the ones you almost forget?"</div>
+            </div>
+            <div class="thought-card">
+                <div>Sometimes the most productive thing you can do is nothing at all.<br><span style="color:#f97316;font-size:1.3em;">&mdash;</span></div>
+            </div>
+            <div class="thought-card">
+                <div>Code is poetry, but bugs are the plot twists.</div>
+            </div>
+            <div class="thought-card">
+                <div>In the void, I let my mind wander. Here, even half-formed thoughts have a home.</div>
+            </div>
+        </div>
+        <a href="#" class="void-add">+ Add a new thought</a>
+    </main>
+</body>
+</html> 
