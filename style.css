@@ -727,3 +727,86 @@ section {
 .contact-info h3 {
     color: #ea580c;
 }
+
+/* Void Link Section */
+.void-link-section {
+    background: #181818;
+    color: #fff;
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.void-link-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(139, 69, 19, 0.1) 0%, transparent 70%);
+    z-index: -1;
+}
+
+.void-link-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.void-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 20px 40px;
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.2), rgba(101, 67, 33, 0.3));
+    border: 2px solid #8b4513;
+    border-radius: 50px;
+    text-decoration: none;
+    color: #deb887;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.void-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(222, 184, 135, 0.2), transparent);
+    transition: left 0.6s;
+}
+
+.void-link:hover::before {
+    left: 100%;
+}
+
+.void-link:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(139, 69, 19, 0.4);
+    border-color: #deb887;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.4), rgba(101, 67, 33, 0.5));
+}
+
+.void-icon {
+    font-size: 1.5rem;
+    color: #deb887;
+    transition: color 0.3s ease;
+    animation: voidPulse 3s ease-in-out infinite;
+}
+
+.void-link:hover .void-icon {
+    color: #fff;
+}
+
+@keyframes voidPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}

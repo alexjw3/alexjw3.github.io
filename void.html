@@ -4,120 +4,382 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Void | Alex Wang</title>
-    <link rel="stylesheet" href="style.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
-            background: linear-gradient(135deg, #fff 0%, #f3f4f6 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b4e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
-        .void-header {
-            text-align: center;
-            margin-top: 80px;
-            margin-bottom: 32px;
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(101, 67, 33, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(222, 184, 135, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            animation: voidShift 20s ease-in-out infinite;
         }
-        .void-title {
-            font-size: 3rem;
-            color: #f97316;
-            letter-spacing: 0.05em;
-            font-weight: 800;
+
+        @keyframes voidShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
         }
-        .void-poem {
-            color: #888;
-            font-size: 1.2rem;
-            margin: 24px auto 0 auto;
-            max-width: 600px;
-            font-style: italic;
-        }
-        .void-thoughts {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-            margin: 48px auto 0 auto;
-            max-width: 900px;
-        }
-        .thought-card {
-            background: #fff;
-            border: 2px dashed #f97316;
-            border-radius: 18px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            padding: 2rem 1.5rem;
-            min-width: 260px;
-            max-width: 340px;
-            min-height: 140px;
-            color: #181818;
-            font-size: 1.1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: box-shadow 0.2s;
-        }
-        .thought-card:hover {
-            box-shadow: 0 6px 32px rgba(249,115,22,0.08);
-            border-color: #ea580c;
-        }
-        .void-add {
-            display: block;
-            margin: 48px auto 0 auto;
-            text-align: center;
-            color: #f97316;
-            font-size: 1.1rem;
-            text-decoration: none;
-            border: 2px solid #f97316;
-            border-radius: 24px;
-            padding: 0.75rem 2.5rem;
-            background: #fff7ed;
-            transition: background 0.2s, color 0.2s;
-        }
-        .void-add:hover {
-            background: #f97316;
-            color: #fff;
-        }
+
         .void-back {
             position: fixed;
             top: 24px;
             left: 24px;
-            color: #f97316;
+            color: #deb887;
             text-decoration: none;
             font-weight: 600;
-            font-size: 1.1rem;
-            background: #fff7ed;
-            border-radius: 16px;
-            padding: 0.5rem 1.2rem;
-            border: 1.5px solid #f97316;
-            transition: background 0.2s, color 0.2s;
+            font-size: 1rem;
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 24px;
+            padding: 12px 20px;
+            border: 2px solid #8b4513;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
         }
+
         .void-back:hover {
-            background: #f97316;
+            background: rgba(139, 69, 19, 0.4);
             color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .void-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .void-header {
+            text-align: center;
+            margin-top: 120px;
+            margin-bottom: 80px;
+        }
+
+        .void-title {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #deb887;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            text-shadow: 0 0 30px rgba(222, 184, 135, 0.3);
+            animation: voidGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes voidGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(222, 184, 135, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(222, 184, 135, 0.6); }
+        }
+
+        .void-subtitle {
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .void-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+
+        .void-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .void-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(222, 184, 135, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .void-section:hover::before {
+            left: 100%;
+        }
+
+        .void-section:hover {
+            transform: translateY(-8px);
+            border-color: rgba(222, 184, 135, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #deb887;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            font-size: 1.8rem;
+            opacity: 0.8;
+        }
+
+        .thoughts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .thought-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #8b4513;
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .thought-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-left-color: #deb887;
+            transform: translateX(8px);
+        }
+
+        .projects-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .project-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            background: rgba(139, 69, 19, 0.15);
+            border: 2px solid rgba(139, 69, 19, 0.3);
+            border-radius: 16px;
+            text-decoration: none;
+            color: #deb887;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(222, 184, 135, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .project-link:hover::before {
+            left: 100%;
+        }
+
+        .project-link:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: #deb887;
+            background: rgba(139, 69, 19, 0.25);
+            box-shadow: 0 12px 30px rgba(139, 69, 19, 0.3);
+        }
+
+        .project-emoji {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px rgba(222, 184, 135, 0.3));
+        }
+
+        .project-details h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .project-details p {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .void-footer {
+            text-align: center;
+            padding: 60px 0;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .void-title {
+                font-size: 2.5rem;
+            }
+            
+            .void-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .void-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .void-section {
+                padding: 24px;
+            }
+        }
+
+        /* Special terrarium highlight */
+        .terrarium-link {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.2), rgba(46, 125, 50, 0.3));
+            border-color: rgba(76, 175, 80, 0.4);
+        }
+
+        .terrarium-link:hover {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.3), rgba(46, 125, 50, 0.4));
+            border-color: #4caf50;
+            box-shadow: 0 12px 30px rgba(76, 175, 80, 0.4);
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="void-back">&larr; Back to Portfolio</a>
-    <header class="void-header">
-        <div class="void-title">The Void</div>
-        <div class="void-poem">
-            A space for thoughts, fragments, sketches, and the unfiltered mind.<br>
-            Here, ideas float—unfinished, unjudged, and infinite.<br>
-            Welcome to the void between projects, where anything can exist.
+    <a href="index.html" class="void-back">← Back to Portfolio</a>
+    
+    <div class="void-container">
+        <header class="void-header">
+            <h1 class="void-title">The Void</h1>
+            <p class="void-subtitle">
+                A liminal space for thoughts, experiments, and digital wanderings.<br>
+                Here, ideas exist without judgment—fragmented, unpolished, infinite.
+            </p>
+        </header>
+
+        <div class="void-grid">
+            <!-- Philosophical Musings -->
+            <section class="void-section">
+                <h2 class="section-title">
+                    <span class="section-icon">💭</span>
+                    Fragments
+                </h2>
+                <div class="thoughts-list">
+                    <div class="thought-item">
+                        "What if the best ideas are the ones you almost forget?"
+                    </div>
+                    <div class="thought-item">
+                        Sometimes the most productive thing you can do is nothing at all.
+                    </div>
+                    <div class="thought-item">
+                        Code is poetry, but bugs are the plot twists nobody asked for.
+                    </div>
+                    <div class="thought-item">
+                        In the void, half-formed thoughts find their home.
+                    </div>
+                    <div class="thought-item">
+                        The space between keystrokes is where creativity lives.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Digital Experiments -->
+            <section class="void-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🧪</span>
+                    Digital Experiments
+                </h2>
+                <div class="projects-grid">
+                    <a href="terrarium.html" class="project-link terrarium-link">
+                        <span class="project-emoji">🌳</span>
+                        <div class="project-details">
+                            <h3>Forest Terrarium</h3>
+                            <p>Watch trees grow through seasons in this living ecosystem simulation</p>
+                        </div>
+                    </a>
+                    
+                    <div class="project-link" style="opacity: 0.5; cursor: not-allowed;">
+                        <span class="project-emoji">🌌</span>
+                        <div class="project-details">
+                            <h3>Cosmic Drift</h3>
+                            <p>An interactive visualization of stellar movement (coming soon)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="project-link" style="opacity: 0.5; cursor: not-allowed;">
+                        <span class="project-emoji">🎼</span>
+                        <div class="project-details">
+                            <h3>Algorithmic Compositions</h3>
+                            <p>AI-generated music that evolves with user interaction (in development)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Current Obsessions -->
+            <section class="void-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🔮</span>
+                    Current Obsessions
+                </h2>
+                <div class="thoughts-list">
+                    <div class="thought-item">
+                        How do we build AI systems that surprise us in delightful ways?
+                    </div>
+                    <div class="thought-item">
+                        The aesthetics of code: when function becomes art.
+                    </div>
+                    <div class="thought-item">
+                        Emergence in simple systems—complexity from simplicity.
+                    </div>
+                    <div class="thought-item">
+                        What would a truly empathetic AI look like?
+                    </div>
+                </div>
+            </section>
         </div>
-    </header>
-    <main>
-        <div class="void-thoughts">
-            <div class="thought-card">
-                <div>"What if the best ideas are the ones you almost forget?"</div>
-            </div>
-            <div class="thought-card">
-                <div>Sometimes the most productive thing you can do is nothing at all.<br><span style="color:#f97316;font-size:1.3em;">&mdash;</span></div>
-            </div>
-            <div class="thought-card">
-                <div>Code is poetry, but bugs are the plot twists.</div>
-            </div>
-            <div class="thought-card">
-                <div>In the void, I let my mind wander. Here, even half-formed thoughts have a home.</div>
-            </div>
-        </div>
-        <a href="#" class="void-add">+ Add a new thought</a>
-    </main>
+
+        <footer class="void-footer">
+            "In the void, we find not emptiness, but infinite possibility."
+        </footer>
+    </div>
 </body>
-</html> 
+</html>
