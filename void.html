@@ -217,6 +217,10 @@
 <body>
     <nav class="nav">
         <a href="index.html" class="nav-back">return to portfolio</a>
+        <div class="konami-progress" id="konami-progress" style="position: absolute; right: 24px; top: 50%; transform: translateY(-50%); display: none;">
+            <span style="color: #666; font-size: 0.7rem;">sequence: </span>
+            <span id="progress-dots" style="color: #00ff88; font-size: 0.7rem;"></span>
+        </div>
     </nav>
 
     <div class="container">
@@ -230,15 +234,6 @@
                 <div class="project-meta">
                     <span class="project-id">001</span>
                 </div>
-                <h2 class="project-title">Forest Terrarium</h2>
-                <p class="project-desc">An interactive ecosystem simulation featuring seasonal cycles, tree growth algorithms, and real-time environmental changes. Watch digital nature evolve through multiple seasons.</p>
-                <a href="terrarium.html" class="project-link">explore simulation</a>
-            </article>
-
-            <article class="project">
-                <div class="project-meta">
-                    <span class="project-id">002</span>
-                </div>
                 <h2 class="project-title">Forks & Fortunes</h2>
                 <p class="project-desc">Comprehensive data analysis of Bay Area restaurant trends, pricing patterns, and demographic correlations. Statistical insights into the local culinary landscape.</p>
                 <a href="https://github.com/alexjw3/forks_and_fortunes/blob/main/project_report.md" class="project-link">view analysis</a>
@@ -246,7 +241,7 @@
 
             <article class="project">
                 <div class="project-meta">
-                    <span class="project-id">003</span>
+                    <span class="project-id">002</span>
                 </div>
                 <h2 class="project-title">Alexander Wang Collection</h2>
                 <p class="project-desc">A curated catalog documenting notable individuals named Alexander Wang across various fields and industries. An exploration of shared identity and diverse achievements.</p>
@@ -255,7 +250,7 @@
 
             <article class="project">
                 <div class="project-meta">
-                    <span class="project-id">004</span>
+                    <span class="project-id">003</span>
                 </div>
                 <h2 class="project-title">Perfect Circle Challenge</h2>
                 <p class="project-desc">Test your drawing precision with this mathematical accuracy tool. Real-time scoring algorithms evaluate circular drawing skills with detailed performance metrics.</p>
@@ -264,17 +259,210 @@
 
             <article class="project">
                 <div class="project-meta">
-                    <span class="project-id">005</span>
+                    <span class="project-id">004</span>
                 </div>
                 <h2 class="project-title">AI-Generated LEGO Instructions</h2>
                 <p class="project-desc">CS224N project leveraging GPT-4o vision and fine-tuned language models to generate accessible LEGO instruction manuals. Bridging computer vision and natural language processing.</p>
                 <a href="lego-project.html" class="project-link">view research</a>
             </article>
+
+            <article class="project">
+                <div class="project-meta">
+                    <span class="project-id">005</span>
+                </div>
+                <h2 class="project-title">Forest Terrarium</h2>
+                <p class="project-desc">An interactive ecosystem simulation featuring seasonal cycles, tree growth algorithms, and real-time environmental changes. Watch digital nature evolve through multiple seasons. <em style="color: #ff6b6b;">[BROKEN - working on fixes]</em></p>
+                <a href="terrarium.html" class="project-link">explore simulation</a>
+            </article>
+
+            <article class="project">
+                <div class="project-meta">
+                    <span class="project-id">006</span>
+                </div>
+                <h2 class="project-title">Volume Project</h2>
+                <p class="project-desc">An experimental audio control interface featuring unconventional volume manipulation methods. Test your patience with deliberately chaotic user interactions and creative audio visualization. <em style="color: #ff6b6b;">[BROKEN - working on fixes]</em></p>
+                <a href="rickroll.html" class="project-link">experience chaos</a>
+            </article>
         </main>
     </div>
 
     <div class="footer-info">
-        <span>5</span> projects loaded
+        <span id="project-count">6</span> projects loaded
     </div>
+
+    <!-- Hidden Konami Code Project -->
+    <div id="konami-project" class="konami-project" style="display: none;">
+        <article class="project konami-unlocked">
+            <div class="project-meta">
+                <span class="project-id">???</span>
+                <span class="classified-badge">CLASSIFIED</span>
+            </div>
+            <h2 class="project-title">Project VOID_ACCESS</h2>
+            <p class="project-desc">A secret project that exists only in the void between keystrokes. You've demonstrated the ancient knowledge required to access this classified experiment in digital archaeology.</p>
+            <a href="#" onclick="konamiMessage()" class="project-link">access archives</a>
+        </article>
+    </div>
+
+    <script>
+        // Konami Code Implementation
+        const konamiCode = [
+            'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+            'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+            'KeyB', 'KeyA'
+        ];
+        
+        let userInput = [];
+        let konamiUnlocked = false;
+
+        document.addEventListener('keydown', function(event) {
+            // Add the pressed key to user input
+            userInput.push(event.code);
+            
+            // Keep only the last 10 keys (length of Konami code)
+            if (userInput.length > konamiCode.length) {
+                userInput.shift();
+            }
+            
+            // Check if the sequence matches
+            if (userInput.length === konamiCode.length) {
+                const matches = userInput.every((key, index) => key === konamiCode[index]);
+                
+                if (matches && !konamiUnlocked) {
+                    unlockKonamiProject();
+                }
+            }
+        });
+
+        function unlockKonamiProject() {
+            konamiUnlocked = true;
+            const hiddenProject = document.getElementById('konami-project');
+            const projectsContainer = document.querySelector('.projects');
+            const projectCount = document.getElementById('project-count');
+            
+            // Add the hidden project to the projects container
+            projectsContainer.appendChild(hiddenProject.querySelector('.project'));
+            hiddenProject.style.display = 'none'; // Hide the wrapper
+            
+            // Update project count
+            projectCount.textContent = '7';
+            
+            // Add special effect
+            document.body.style.animation = 'konami-flash 0.3s ease-in-out';
+            
+            // Show notification
+            showKonamiNotification();
+            
+            // Play subtle sound effect (using Web Audio API)
+            playKonamiSound();
+        }
+
+        function showKonamiNotification() {
+            const notification = document.createElement('div');
+            notification.innerHTML = '✧ VOID ACCESS GRANTED ✧';
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 255, 136, 0.1);
+                border: 1px solid #00ff88;
+                color: #00ff88;
+                padding: 16px 32px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.9rem;
+                border-radius: 4px;
+                z-index: 9999;
+                animation: konami-notification 3s ease-in-out forwards;
+                backdrop-filter: blur(10px);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function playKonamiSound() {
+            // Create a simple beep sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        function konamiMessage() {
+            alert('🌌 You have accessed the void archives. Some secrets are meant to be discovered by those who remember the old ways. 🌌');
+        }
+    </script>
+
+    <style>
+        /* Konami Code Styles */
+        .konami-unlocked {
+            border-color: #00ff88 !important;
+            background: linear-gradient(135deg, #161616 0%, #1a1a1a 100%);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+            animation: konami-glow 2s ease-in-out infinite alternate;
+        }
+
+        .classified-badge {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            float: right;
+            animation: classified-blink 2s infinite;
+        }
+
+        @keyframes konami-flash {
+            0%, 100% { background: #0a0a0a; }
+            50% { background: #0d0d0d; }
+        }
+
+        @keyframes konami-glow {
+            from { box-shadow: 0 0 20px rgba(0, 255, 136, 0.1); }
+            to { box-shadow: 0 0 30px rgba(0, 255, 136, 0.2); }
+        }
+
+        @keyframes classified-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+
+        @keyframes konami-notification {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8); 
+            }
+            20% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.1); 
+            }
+            30% { 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            90% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.9); 
+            }
+        }
+    </style>
 </body>
 </html>

@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definitely Not Suspicious Music</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 3px 3px 0px #000;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .video-container {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .controls-chaos {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls-chaos::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .control-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 3px dashed #ff6b6b;
+            border-radius: 15px;
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-section:hover {
+            border-color: #45b7d1;
+            background: rgba(255,255,255,0.95);
+        }
+
+        .control-section.selected {
+            border: 3px solid #ff6b6b;
+            background: rgba(255,107,107,0.1);
+            box-shadow: 0 0 20px rgba(255,107,107,0.3);
+        }
+
+        .control-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            text-decoration: underline;
+            text-decoration-color: #4ecdc4;
+        }
+
+        /* Fake Video Player Styles */
+        .audio-player-container {
+            position: relative;
+        }
+
+        .fake-video-player {
+            width: 560px;
+            height: 315px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: videoFloat 4s ease-in-out infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        @keyframes videoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .play-icon {
+            font-size: 4rem;
+            animation: pulse 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .fake-progress-bar {
+            width: 80%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .fake-progress {
+            height: 100%;
+            background: #ff6b6b;
+            width: 0%;
+            border-radius: 4px;
+            animation: fakeProgress 10s linear infinite;
+        }
+
+        @keyframes fakeProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Standard slider styling */
+        .volume-slider {
+            width: 300px;
+            height: 20px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #333;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Backwards Slider */
+        .backwards-slider {
+            width: 300px;
+            height: 20px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .backwards-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #333;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Escaping Slider */
+        .escaping-slider {
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .escaping-slider:hover {
+            transform: translateX(50px) translateY(-20px) rotate(15deg);
+        }
+
+        /* Spinning Volume Wheel */
+        .volume-wheel {
+            width: 150px;
+            height: 150px;
+            border: 10px solid #45b7d1;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            margin: 20px auto;
+            transition: transform 0.3s ease;
+        }
+
+        .volume-wheel:hover {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .wheel-needle {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 60px;
+            background: #ff6b6b;
+            border-radius: 2px;
+            transform-origin: bottom center;
+        }
+
+        /* Mouse tracker */
+        .mouse-tracker {
+            width: 400px;
+            height: 200px;
+            border: 3px solid #45b7d1;
+            border-radius: 10px;
+            position: relative;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+        }
+
+        .mouse-cursor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: all 0.1s ease;
+        }
+
+        /* Drawing canvas */
+        .drawing-canvas {
+            border: 3px solid #96ceb4;
+            border-radius: 10px;
+            cursor: crosshair;
+        }
+
+        /* Color picker wheel */
+        .color-wheel {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            margin: 20px auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .color-selector {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Math Problem Volume */
+        .math-volume {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .math-input {
+            width: 80px;
+            padding: 10px;
+            border: 3px solid #96ceb4;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* Broken Sliders */
+        .broken-slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .broken-piece {
+            width: 60px;
+            height: 20px;
+            background: #ffeaa7;
+            border: 2px solid #333;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .broken-piece:hover {
+            background: #ff6b6b;
+            transform: scale(1.1);
+        }
+
+        /* Voice Control */
+        .voice-control {
+            text-align: center;
+        }
+
+        .voice-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .voice-button:hover {
+            background: #45b7d1;
+            transform: scale(1.1);
+        }
+
+        /* Upside Down Control */
+        .upside-down {
+            transform: rotate(180deg);
+        }
+
+        /* Too Sensitive Slider */
+        .sensitive-slider {
+            width: 400px;
+            background: linear-gradient(90deg, #96ceb4, #ffeaa7);
+        }
+
+        /* Secret Modifier Controls */
+        .modifier-info {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* Type Your Volume */
+        .type-volume {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .volume-display {
+            font-size: 2rem;
+            color: #ff6b6b;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 10px;
+            border: 3px solid #4ecdc4;
+        }
+
+        /* Konami Code Volume */
+        .konami-display {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Piano Keys */
+        .piano {
+            display: flex;
+            margin: 20px auto;
+            width: fit-content;
+        }
+
+        .piano-key {
+            width: 40px;
+            height: 150px;
+            background: white;
+            border: 2px solid #333;
+            cursor: pointer;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.1s ease;
+        }
+
+        .piano-key:hover, .piano-key.active {
+            background: #f0f0f0;
+            transform: translateY(2px);
+        }
+
+        .piano-key.black {
+            background: #333;
+            color: white;
+            height: 100px;
+            width: 25px;
+            margin: 0 -12.5px;
+            z-index: 2;
+        }
+
+        .piano-key.black:hover, .piano-key.black.active {
+            background: #555;
+        }
+
+        /* Typing Speed Test */
+        .typing-test {
+            text-align: center;
+        }
+
+        .typing-text {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            font-family: monospace;
+        }
+
+        .typing-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 3px solid #4ecdc4;
+            border-radius: 10px;
+            font-family: monospace;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .title { font-size: 2rem; }
+            .fake-video-player {
+                width: 100%;
+                height: 250px;
+            }
+            .backwards-slider, .sensitive-slider, .volume-slider {
+                width: 250px;
+            }
+            .mouse-tracker {
+                width: 300px;
+            }
+        }
+
+        /* Warning Messages */
+        .warning {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .current-volume-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            z-index: 1000;
+        }
+
+        /* Memory Game */
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .memory-card {
+            width: 60px;
+            height: 60px;
+            background: #4ecdc4;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        /* Simon Says */
+        .simon-game {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .simon-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .simon-red { background: #ff6b6b; }
+        .simon-blue { background: #45b7d1; }
+        .simon-green { background: #96ceb4; }
+        .simon-yellow { background: #ffeaa7; }
+
+        .simon-button.active {
+            transform: scale(0.95);
+            filter: brightness(1.5);
+        }
+
+        /* Webcam */
+        .webcam-container {
+            text-align: center;
+        }
+
+        .webcam-video {
+            max-width: 300px;
+            border-radius: 10px;
+            border: 3px solid #4ecdc4;
+        }
+
+        /* Battery */
+        .battery-display {
+            width: 200px;
+            height: 60px;
+            border: 3px solid #333;
+            border-radius: 10px;
+            margin: 20px auto;
+            position: relative;
+            background: #f0f0f0;
+        }
+
+        .battery-level {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #96ceb4, #4ecdc4);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .battery-tip {
+            position: absolute;
+            right: -10px;
+            top: 20px;
+            width: 8px;
+            height: 20px;
+            background: #333;
+            border-radius: 0 3px 3px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="current-volume-display">
+        Current Volume: <span id="volumeDisplay">50</span>%
+    </div>
+
+    <div class="container">
+        <h1 class="title">ULTIMATE VOLUME CONTROL CHALLENGE</h1>
+        
+        <div class="video-container">
+            <div class="audio-player-container">
+                <audio id="musicAudio" autoplay loop>
+                    <source src="Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster).mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="fake-video-player">
+                    <div class="play-icon">▶</div>
+                    <h2 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">NOW PLAYING</h2>
+                    <h3 style="color: #ff6b6b; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">Totally Normal Music Track</h3>
+                    <div class="fake-progress-bar">
+                        <div class="fake-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-chaos">
+            <div style="background: #ff6b6b; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: bold;">
+                📝 INSTRUCTIONS: Click on any volume control section below to select it. Only the selected control will work. Click again to deselect.
+            </div>
+            
+            <div class="control-section" data-control="backwards">
+                <h3 class="control-title">The Backwards Slider</h3>
+                <p>This slider works in reverse! Left = louder, Right = quieter</p>
+                <input type="range" min="0" max="100" value="50" class="backwards-slider" id="backwardsSlider">
+            </div>
+
+            <div class="control-section" data-control="escaping">
+                <h3 class="control-title">The Escaping Slider</h3>
+                <p>Try to catch it if you can!</p>
+                <input type="range" min="0" max="100" value="50" class="escaping-slider" id="escapingSlider">
+            </div>
+
+            <div class="control-section" data-control="mouse">
+                <h3 class="control-title">Mouse Position Tracker</h3>
+                <p>Move your mouse around this area - X controls volume, Y controls nothing!</p>
+                <div class="mouse-tracker" id="mouseTracker">
+                    <div class="mouse-cursor" id="mouseCursor"></div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="drawing">
+                <h3 class="control-title">Drawing Volume Control</h3>
+                <p>Draw something! The more lines you draw, the louder it gets</p>
+                <canvas class="drawing-canvas" id="drawingCanvas" width="400" height="200"></canvas>
+                <br><button class="voice-button" onclick="clearCanvas()">Clear Canvas</button>
+            </div>
+
+            <div class="control-section" data-control="colorWheel">
+                <h3 class="control-title">Color Wheel Volume</h3>
+                <p>Click around the color wheel - hue determines volume</p>
+                <div class="color-wheel" id="colorWheel">
+                    <div class="color-selector" id="colorSelector"></div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="piano">
+                <h3 class="control-title">Piano Volume Control</h3>
+                <p>Play the keys! Each key sets a different volume level</p>
+                <div class="piano" id="piano">
+                    <div class="piano-key" data-volume="10">10</div>
+                    <div class="piano-key black" data-volume="15"></div>
+                    <div class="piano-key" data-volume="20">20</div>
+                    <div class="piano-key black" data-volume="25"></div>
+                    <div class="piano-key" data-volume="30">30</div>
+                    <div class="piano-key" data-volume="40">40</div>
+                    <div class="piano-key black" data-volume="45"></div>
+                    <div class="piano-key" data-volume="50">50</div>
+                    <div class="piano-key black" data-volume="55"></div>
+                    <div class="piano-key" data-volume="60">60</div>
+                    <div class="piano-key black" data-volume="65"></div>
+                    <div class="piano-key" data-volume="70">70</div>
+                    <div class="piano-key" data-volume="80">80</div>
+                    <div class="piano-key black" data-volume="85"></div>
+                    <div class="piano-key" data-volume="90">90</div>
+                    <div class="piano-key black" data-volume="95"></div>
+                    <div class="piano-key" data-volume="100">100</div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="typing">
+                <h3 class="control-title">Typing Speed Volume</h3>
+                <p>Type the text below as fast as you can! Speed controls volume</p>
+                <div class="typing-test">
+                    <div class="typing-text" id="typingText">The quick brown fox jumps over the lazy dog</div>
+                    <input type="text" class="typing-input" id="typingInput" placeholder="Start typing here...">
+                    <div id="typingSpeed">WPM: 0 | Volume: 0%</div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="memory">
+                <h3 class="control-title">Memory Game Volume</h3>
+                <p>Match pairs to increase volume! Each pair adds 10%</p>
+                <div class="memory-game" id="memoryGame"></div>
+                <button class="voice-button" onclick="resetMemoryGame()">Reset Game</button>
+            </div>
+
+            <div class="control-section" data-control="simon">
+                <h3 class="control-title">Simon Says Volume</h3>
+                <p>Follow the pattern! Each correct sequence increases volume</p>
+                <div class="simon-game" id="simonGame">
+                    <div class="simon-button simon-red" data-color="red"></div>
+                    <div class="simon-button simon-blue" data-color="blue"></div>
+                    <div class="simon-button simon-green" data-color="green"></div>
+                    <div class="simon-button simon-yellow" data-color="yellow"></div>
+                </div>
+                <button class="voice-button" onclick="startSimonGame()">Start Game</button>
+                <div id="simonStatus">Press Start to begin</div>
+            </div>
+
+            <div class="control-section" data-control="time">
+                <h3 class="control-title">Time-Based Volume</h3>
+                <p>Volume changes based on current time! Each second = different volume</p>
+                <div id="timeDisplay">Current time determines volume</div>
+            </div>
+
+            <div class="control-section" data-control="scroll">
+                <h3 class="control-title">Scroll Position Volume</h3>
+                <p>Scroll up and down this page to control volume!</p>
+                <div id="scrollDisplay">Scroll position: 0%</div>
+            </div>
+
+            <div class="control-section" data-control="resize">
+                <h3 class="control-title">Window Resize Volume</h3>
+                <p>Resize your browser window! Width controls volume</p>
+                <div id="windowDisplay">Window width: 0px</div>
+            </div>
+
+            <div class="control-section" data-control="click">
+                <h3 class="control-title">Click Counter Volume</h3>
+                <p>Click anywhere on this section! More clicks = higher volume</p>
+                <div class="click-counter" id="clickCounter" style="padding: 50px; background: rgba(255,255,255,0.5); border-radius: 10px; cursor: pointer;">
+                    Clicks: <span id="clickCount">0</span> | Volume: <span id="clickVolume">0</span>%
+                </div>
+            </div>
+
+            <div class="control-section" data-control="webcam">
+                <h3 class="control-title">Webcam Brightness Volume</h3>
+                <p>Show your camera! Brightness of the video controls volume</p>
+                <div class="webcam-container">
+                    <video class="webcam-video" id="webcamVideo" autoplay muted></video>
+                    <br><button class="voice-button" onclick="startWebcam()">Start Camera</button>
+                    <div id="brightnessDisplay">Brightness: 0%</div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="battery">
+                <h3 class="control-title">Battery Level Volume</h3>
+                <p>Your device battery level controls volume (if supported)</p>
+                <div class="battery-display">
+                    <div class="battery-level" id="batteryLevel" style="width: 50%;"></div>
+                    <div class="battery-tip"></div>
+                </div>
+                <div id="batteryDisplay">Battery: Not supported or checking...</div>
+            </div>
+
+            <div class="control-section" data-control="wheel">
+                <h3 class="control-title">The Spinning Volume Wheel</h3>
+                <p>Click and drag around the wheel to adjust volume</p>
+                <div class="volume-wheel" id="volumeWheel">
+                    <div class="wheel-needle" id="wheelNeedle"></div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="math">
+                <h3 class="control-title">Math Problem Volume</h3>
+                <p>Solve to adjust volume: What is <span id="mathProblem">7 × 8</span>?</p>
+                <div class="math-volume">
+                    <input type="number" class="math-input" id="mathAnswer" placeholder="?">
+                    <button onclick="checkMath()" class="voice-button">Submit</button>
+                </div>
+                <div class="modifier-info">Current answer sets volume percentage!</div>
+            </div>
+
+            <div class="control-section" data-control="broken">
+                <h3 class="control-title">The Broken Slider</h3>
+                <p>Click the pieces in the right order: Red, Blue, Green, Yellow, Purple</p>
+                <div class="broken-slider-container">
+                    <div class="broken-piece" data-color="red" style="background: #ff6b6b;"></div>
+                    <div class="broken-piece" data-color="blue" style="background: #45b7d1;"></div>
+                    <div class="broken-piece" data-color="green" style="background: #96ceb4;"></div>
+                    <div class="broken-piece" data-color="yellow" style="background: #ffeaa7;"></div>
+                    <div class="broken-piece" data-color="purple" style="background: #a29bfe;"></div>
+                </div>
+                <div id="brokenSequence">Sequence: </div>
+            </div>
+
+            <div class="control-section upside-down" data-control="upsideDown">
+                <h3 class="control-title">The Upside Down Slider</h3>
+                <p>Everything is backwards here!</p>
+                <input type="range" min="0" max="100" value="50" class="volume-slider" id="upsideDownSlider">
+            </div>
+
+            <div class="control-section" data-control="sensitive">
+                <h3 class="control-title">The Too Sensitive Slider</h3>
+                <p>Good luck controlling this beast!</p>
+                <input type="range" min="0" max="100" value="50" class="sensitive-slider" id="sensitiveSlider">
+                <div class="modifier-info">Hold SHIFT for normal sensitivity</div>
+            </div>
+
+            <div class="control-section" data-control="type">
+                <h3 class="control-title">Type Your Volume</h3>
+                <p>Type the volume percentage you want:</p>
+                <div class="type-volume">
+                    <input type="text" id="typeVolume" placeholder="Type volume..." style="padding: 10px; border-radius: 10px; border: 3px solid #4ecdc4;">
+                    <div class="volume-display" id="typedVolumeDisplay">--</div>
+                </div>
+            </div>
+
+            <div class="control-section" data-control="konami">
+                <h3 class="control-title">Konami Code Volume</h3>
+                <p>Enter the classic sequence: ↑↑↓↓←→←→BA</p>
+                <div class="konami-display" id="konamiDisplay">Sequence: </div>
+                <div class="modifier-info">Complete the sequence to unlock volume control!</div>
+            </div>
+
+            <div class="control-section" data-control="random">
+                <h3 class="control-title">Random Volume Roulette</h3>
+                <p>Feeling lucky?</p>
+                <button class="voice-button" onclick="randomVolume()">Random Volume!</button>
+            </div>
+
+            <div class="warning">
+                WARNING: Volume controls may not work as expected
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentVolume = 50;
+        let brokenSequence = [];
+        let konamiSequence = [];
+        let mathA = 7, mathB = 8;
+        let clickCount = 0;
+        let memoryCards = [];
+        let memoryFlipped = [];
+        let memoryMatched = [];
+        let simonSequence = [];
+        let simonUserSequence = [];
+        let simonPlaying = false;
+        let drawingStrokes = 0;
+        let typingStartTime = null;
+
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+
+        function updateVolumeDisplay() {
+            document.getElementById('volumeDisplay').textContent = Math.round(currentVolume);
+            const audio = document.getElementById('musicAudio');
+            if (audio) {
+                audio.volume = currentVolume / 100;
+            }
+        }
+
+        // Backwards slider
+        document.getElementById('backwardsSlider').addEventListener('input', function(e) {
+            if (shouldUpdateVolume('backwards')) {
+                currentVolume = 100 - parseInt(e.target.value);
+                updateVolumeDisplay();
+            }
+        });
+
+        // Escaping slider
+        let escapeCount = 0;
+        document.getElementById('escapingSlider').addEventListener('mouseover', function() {
+            escapeCount++;
+            if (escapeCount > 3) {
+                this.style.transform = `translateX(${Math.random() * 200 - 100}px) translateY(${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg)`;
+            }
+        });
+
+        document.getElementById('escapingSlider').addEventListener('input', function(e) {
+            if (escapeCount <= 3 && shouldUpdateVolume('escaping')) {
+                currentVolume = parseInt(e.target.value);
+                updateVolumeDisplay();
+            }
+        });
+
+        // Mouse position tracker
+        document.getElementById('mouseTracker').addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const volume = Math.round((x / rect.width) * 100);
+            
+            if (shouldUpdateVolume('mouse')) {
+                currentVolume = Math.max(0, Math.min(100, volume));
+                updateVolumeDisplay();
+            }
+            
+            const cursor = document.getElementById('mouseCursor');
+            cursor.style.left = x - 10 + 'px';
+            cursor.style.top = y - 10 + 'px';
+        });
+
+        // Drawing canvas
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        canvas.addEventListener('mousedown', () => {
+            isDrawing = true;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#ff6b6b';
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            drawingStrokes++;
+            if (shouldUpdateVolume('drawing')) {
+                currentVolume = Math.min(100, drawingStrokes);
+                updateVolumeDisplay();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            ctx.beginPath();
+        });
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawingStrokes = 0;
+            currentVolume = 0;
+            updateVolumeDisplay();
+        }
+
+        // Color wheel
+        document.getElementById('colorWheel').addEventListener('click', function(e) {
+            if (!shouldUpdateVolume('colorWheel')) return;
+            
+            const rect = this.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const x = e.clientX - rect.left - centerX;
+            const y = e.clientY - rect.top - centerY;
+            
+            let angle = Math.atan2(y, x) * 180 / Math.PI;
+            if (angle < 0) angle += 360;
+            
+            currentVolume = Math.round((angle / 360) * 100);
+            updateVolumeDisplay();
+            
+            const selector = document.getElementById('colorSelector');
+            const radius = 90;
+            const selectorX = centerX + Math.cos(angle * Math.PI / 180) * radius - 10;
+            const selectorY = centerY + Math.sin(angle * Math.PI / 180) * radius - 10;
+            selector.style.left = selectorX + 'px';
+            selector.style.top = selectorY + 'px';
+        });
+
+        // Piano keys
+        document.querySelectorAll('.piano-key').forEach(key => {
+            key.addEventListener('click', function() {
+                if (shouldUpdateVolume('piano')) {
+                    currentVolume = parseInt(this.getAttribute('data-volume'));
+                    updateVolumeDisplay();
+                }
+                
+                this.classList.add('active');
+                setTimeout(() => this.classList.remove('active'), 200);
+            });
+        });
+
+        // Typing speed test
+        const typingTexts = [
+            "The quick brown fox jumps over the lazy dog",
+            "Pack my box with five dozen liquor jugs",
+            "How vexingly quick daft zebras jump",
+            "Bright vixens jump dozy fowl quack"
+        ];
+
+        let currentTypingText = typingTexts[0];
+        document.getElementById('typingText').textContent = currentTypingText;
+
+        document.getElementById('typingInput').addEventListener('input', function(e) {
+            const typed = e.target.value;
+            const target = currentTypingText;
+            
+            if (!typingStartTime) {
+                typingStartTime = Date.now();
+            }
+            
+            const timeElapsed = (Date.now() - typingStartTime) / 1000 / 60; // minutes
+            const wordsTyped = typed.split(' ').length;
+            const wpm = Math.round(wordsTyped / timeElapsed) || 0;
+            
+            if (shouldUpdateVolume('typing')) {
+                currentVolume = Math.min(100, wpm);
+                updateVolumeDisplay();
+            }
+            
+            document.getElementById('typingSpeed').textContent = `WPM: ${wpm} | Volume: ${currentVolume}%`;
+            
+            if (typed === target) {
+                // Switch to new text
+                currentTypingText = typingTexts[Math.floor(Math.random() * typingTexts.length)];
+                document.getElementById('typingText').textContent = currentTypingText;
+                e.target.value = '';
+                typingStartTime = null;
+            }
+        });
+
+        // Memory game
+        function initMemoryGame() {
+            const symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            memoryCards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+            const gameContainer = document.getElementById('memoryGame');
+            gameContainer.innerHTML = '';
+            
+            memoryCards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.symbol = symbol;
+                card.dataset.index = index;
+                card.addEventListener('click', flipMemoryCard);
+                gameContainer.appendChild(card);
+            });
+            
+            memoryFlipped = [];
+            memoryMatched = [];
+        }
+
+        function flipMemoryCard(e) {
+            if (memoryFlipped.length >= 2) return;
+            if (e.target.classList.contains('flipped')) return;
+            
+            e.target.classList.add('flipped');
+            e.target.textContent = e.target.dataset.symbol;
+            memoryFlipped.push(e.target);
+            
+            if (memoryFlipped.length === 2) {
+                setTimeout(() => {
+                    if (memoryFlipped[0].dataset.symbol === memoryFlipped[1].dataset.symbol) {
+                        memoryMatched.push(...memoryFlipped);
+                        currentVolume = Math.min(100, memoryMatched.length * 5);
+                        updateVolumeDisplay();
+                    } else {
+                        memoryFlipped.forEach(card => {
+                            card.classList.remove('flipped');
+                            card.textContent = '';
+                        });
+                    }
+                    memoryFlipped = [];
+                }, 1000);
+            }
+        }
+
+        function resetMemoryGame() {
+            initMemoryGame();
+            currentVolume = 0;
+            updateVolumeDisplay();
+        }
+
+        // Simon Says game
+        function startSimonGame() {
+            simonSequence = [];
+            simonUserSequence = [];
+            simonPlaying = true;
+            currentVolume = 0;
+            updateVolumeDisplay();
+            document.getElementById('simonStatus').textContent = 'Watch the pattern...';
+            addSimonStep();
+        }
+
+        function addSimonStep() {
+            const colors = ['red', 'blue', 'green', 'yellow'];
+            simonSequence.push(colors[Math.floor(Math.random() * colors.length)]);
+            playSimonSequence();
+        }
+
+        function playSimonSequence() {
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i >= simonSequence.length) {
+                    clearInterval(interval);
+                    document.getElementById('simonStatus').textContent = 'Your turn!';
+                    return;
+                }
+                
+                const button = document.querySelector(`[data-color="${simonSequence[i]}"]`);
+                button.classList.add('active');
+                setTimeout(() => button.classList.remove('active'), 300);
+                i++;
+            }, 600);
+        }
+
+        document.querySelectorAll('.simon-button').forEach(button => {
+            button.addEventListener('click', function() {
+                if (!simonPlaying) return;
+                
+                const color = this.dataset.color;
+                simonUserSequence.push(color);
+                
+                this.classList.add('active');
+                setTimeout(() => this.classList.remove('active'), 200);
+                
+                if (simonUserSequence[simonUserSequence.length - 1] !== simonSequence[simonUserSequence.length - 1]) {
+                    document.getElementById('simonStatus').textContent = 'Wrong! Game over.';
+                    simonPlaying = false;
+                    return;
+                }
+                
+                if (simonUserSequence.length === simonSequence.length) {
+                    currentVolume = Math.min(100, simonSequence.length * 10);
+                    updateVolumeDisplay();
+                    simonUserSequence = [];
+                    setTimeout(() => {
+                        document.getElementById('simonStatus').textContent = 'Correct! Next round...';
+                        setTimeout(addSimonStep, 1000);
+                    }, 500);
+                }
+            });
+        });
+
+        // Time-based volume
+        setInterval(() => {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const timeVolume = Math.round((seconds / 60) * 100);
+            document.getElementById('timeDisplay').textContent = `Time: ${now.toLocaleTimeString()} | Volume: ${timeVolume}%`;
+            
+            // Only update if user isn't actively using other controls
+            if (Date.now() - lastInteraction > 2000) {
+                currentVolume = timeVolume;
+                updateVolumeDisplay();
+            }
+        }, 1000);
+
+        let lastInteraction = Date.now();
+
+        // Scroll position volume
+        window.addEventListener('scroll', () => {
+            lastInteraction = Date.now();
+            const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100) || 0;
+            currentVolume = scrollPercent;
+            updateVolumeDisplay();
+            document.getElementById('scrollDisplay').textContent = `Scroll position: ${scrollPercent}%`;
+        });
+
+        // Window resize volume
+        window.addEventListener('resize', () => {
+            lastInteraction = Date.now();
+            const width = window.innerWidth;
+            const maxWidth = screen.width || 1920;
+            currentVolume = Math.round((width / maxWidth) * 100);
+            updateVolumeDisplay();
+            document.getElementById('windowDisplay').textContent = `Window width: ${width}px | Volume: ${currentVolume}%`;
+        });
+
+        // Click counter volume
+        document.getElementById('clickCounter').addEventListener('click', () => {
+            lastInteraction = Date.now();
+            clickCount++;
+            currentVolume = Math.min(100, clickCount * 2);
+            updateVolumeDisplay();
+            document.getElementById('clickCount').textContent = clickCount;
+            document.getElementById('clickVolume').textContent = currentVolume;
+        });
+
+        // Webcam brightness
+        function startWebcam() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    document.getElementById('webcamVideo').srcObject = stream;
+                    
+                    // Analyze brightness
+                    const video = document.getElementById('webcamVideo');
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    setInterval(() => {
+                        if (video.videoWidth && video.videoHeight) {
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            ctx.drawImage(video, 0, 0);
+                            
+                            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            let brightness = 0;
+                            
+                            for (let i = 0; i < imageData.data.length; i += 4) {
+                                brightness += (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
+                            }
+                            
+                            brightness = Math.round(brightness / (imageData.data.length / 4));
+                            const brightnessPercent = Math.round((brightness / 255) * 100);
+                            
+                            currentVolume = brightnessPercent;
+                            updateVolumeDisplay();
+                            document.getElementById('brightnessDisplay').textContent = `Brightness: ${brightnessPercent}%`;
+                        }
+                    }, 500);
+                })
+                .catch(() => {
+                    document.getElementById('brightnessDisplay').textContent = 'Camera access denied';
+                });
+        }
+
+        // Battery level
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(battery => {
+                function updateBattery() {
+                    const level = Math.round(battery.level * 100);
+                    currentVolume = level;
+                    updateVolumeDisplay();
+                    document.getElementById('batteryLevel').style.width = level + '%';
+                    document.getElementById('batteryDisplay').textContent = `Battery: ${level}% | Charging: ${battery.charging}`;
+                }
+                
+                updateBattery();
+                battery.addEventListener('levelchange', updateBattery);
+                battery.addEventListener('chargingchange', updateBattery);
+            });
+        }
+
+        // Volume wheel
+        let isWheelDragging = false;
+        document.getElementById('volumeWheel').addEventListener('mousedown', function(e) {
+            isWheelDragging = true;
+        });
+
+        document.addEventListener('mouseup', function() {
+            isWheelDragging = false;
+        });
+
+        document.getElementById('volumeWheel').addEventListener('mousemove', function(e) {
+            if (isWheelDragging) {
+                lastInteraction = Date.now();
+                const rect = this.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+                const degrees = (angle * 180 / Math.PI + 360) % 360;
+                currentVolume = Math.round((degrees / 360) * 100);
+                document.getElementById('wheelNeedle').style.transform = `rotate(${degrees}deg)`;
+                updateVolumeDisplay();
+            }
+        });
+
+        // Math problem
+        function generateMathProblem() {
+            mathA = Math.floor(Math.random() * 10) + 1;
+            mathB = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('mathProblem').textContent = `${mathA} × ${mathB}`;
+        }
+
+        function checkMath() {
+            lastInteraction = Date.now();
+            const answer = parseInt(document.getElementById('mathAnswer').value);
+            if (answer === mathA * mathB) {
+                currentVolume = Math.min(100, answer);
+                updateVolumeDisplay();
+                generateMathProblem();
+                document.getElementById('mathAnswer').value = '';
+            } else {
+                alert('Wrong answer! Try again.');
+            }
+        }
+
+        // Broken slider sequence
+        const correctSequence = ['red', 'blue', 'green', 'yellow', 'purple'];
+        document.querySelectorAll('.broken-piece').forEach(piece => {
+            piece.addEventListener('click', function() {
+                lastInteraction = Date.now();
+                const color = this.getAttribute('data-color');
+                brokenSequence.push(color);
+                document.getElementById('brokenSequence').textContent = 'Sequence: ' + brokenSequence.join(', ');
+                
+                if (brokenSequence.length === correctSequence.length) {
+                    if (JSON.stringify(brokenSequence) === JSON.stringify(correctSequence)) {
+                        currentVolume = 75;
+                        updateVolumeDisplay();
+                        alert('Broken slider fixed! Volume set to 75%');
+                    } else {
+                        alert('Wrong sequence! Try again.');
+                    }
+                    brokenSequence = [];
+                    document.getElementById('brokenSequence').textContent = 'Sequence: ';
+                }
+            });
+        });
+
+        // Upside down slider
+        document.getElementById('upsideDownSlider').addEventListener('input', function(e) {
+            lastInteraction = Date.now();
+            currentVolume = parseInt(e.target.value);
+            updateVolumeDisplay();
+        });
+
+        // Too sensitive slider
+        let shiftPressed = false;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Shift') shiftPressed = true;
+        });
+        
+        document.addEventListener('keyup', function(e) {
+            if (e.key === 'Shift') shiftPressed = false;
+        });
+
+        document.getElementById('sensitiveSlider').addEventListener('input', function(e) {
+            lastInteraction = Date.now();
+            if (shiftPressed) {
+                currentVolume = parseInt(e.target.value);
+            } else {
+                const randomJump = Math.random() * 100;
+                currentVolume = randomJump;
+                this.value = randomJump;
+            }
+            updateVolumeDisplay();
+        });
+
+        // Type your volume
+        document.getElementById('typeVolume').addEventListener('input', function(e) {
+            lastInteraction = Date.now();
+            const value = e.target.value;
+            const numValue = parseInt(value);
+            if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
+                currentVolume = numValue;
+                document.getElementById('typedVolumeDisplay').textContent = numValue + '%';
+                updateVolumeDisplay();
+            } else {
+                document.getElementById('typedVolumeDisplay').textContent = 'INVALID';
+            }
+        });
+
+        // Konami code
+        document.addEventListener('keydown', function(e) {
+            konamiSequence.push(e.code);
+            if (konamiSequence.length > konamiCode.length) {
+                konamiSequence.shift();
+            }
+            
+            document.getElementById('konamiDisplay').textContent = 'Sequence: ' + konamiSequence.map(code => {
+                const keyMap = {
+                    'ArrowUp': '↑', 'ArrowDown': '↓', 'ArrowLeft': '←', 'ArrowRight': '→',
+                    'KeyB': 'B', 'KeyA': 'A'
+                };
+                return keyMap[code] || code;
+            }).join('');
+
+            if (konamiSequence.length === konamiCode.length) {
+                const matches = konamiSequence.every((key, index) => key === konamiCode[index]);
+                if (matches) {
+                    lastInteraction = Date.now();
+                    currentVolume = 99;
+                    updateVolumeDisplay();
+                    document.getElementById('konamiDisplay').textContent = 'KONAMI CODE ACTIVATED! Volume: 99%';
+                    document.getElementById('konamiDisplay').style.color = '#ff6b6b';
+                }
+            }
+        });
+
+        // Random volume
+        function randomVolume() {
+            lastInteraction = Date.now();
+            currentVolume = Math.floor(Math.random() * 101);
+            updateVolumeDisplay();
+        }
+
+        // Component selection functionality
+        let selectedControl = null;
+        
+        function shouldUpdateVolume(controlType) {
+            return selectedControl === null || selectedControl === controlType;
+        }
+        
+        // Add click handlers to all control sections
+        document.querySelectorAll('.control-section').forEach(section => {
+            section.addEventListener('click', function(e) {
+                // Don't trigger selection if clicking on interactive elements
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || 
+                    e.target.tagName === 'CANVAS' || e.target.classList.contains('piano-key') ||
+                    e.target.classList.contains('simon-button') || e.target.classList.contains('broken-piece') ||
+                    e.target.closest('.volume-wheel') || e.target.closest('.color-wheel') ||
+                    e.target.closest('.memory-card') || e.target.closest('.mouse-tracker')) {
+                    return;
+                }
+                
+                const controlType = this.getAttribute('data-control');
+                
+                // Remove selected class from all sections
+                document.querySelectorAll('.control-section').forEach(s => s.classList.remove('selected'));
+                
+                // If clicking the same control, deselect it
+                if (selectedControl === controlType) {
+                    selectedControl = null;
+                } else {
+                    // Select this control
+                    selectedControl = controlType;
+                    this.classList.add('selected');
+                }
+            });
+        });
+
+        // Aggressive autoplay functionality
+        const audio = document.getElementById('musicAudio');
+        
+        function forceAudioPlay() {
+            audio.volume = currentVolume / 100;
+            audio.play().catch(() => {
+                // If autoplay fails, try again on any user interaction
+                document.addEventListener('click', () => {
+                    audio.play();
+                }, { once: true });
+                
+                document.addEventListener('keydown', () => {
+                    audio.play();
+                }, { once: true });
+                
+                document.addEventListener('touchstart', () => {
+                    audio.play();
+                }, { once: true });
+            });
+        }
+        
+        // Try to play immediately when DOM is ready
+        forceAudioPlay();
+        
+        // Try again after a short delay
+        setTimeout(forceAudioPlay, 100);
+        setTimeout(forceAudioPlay, 500);
+        setTimeout(forceAudioPlay, 1000);
+        
+        // Try when page is fully loaded
+        window.addEventListener('load', forceAudioPlay);
+        
+        // Try when page becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                forceAudioPlay();
+            }
+        });
+
+        // Initialize everything
+        generateMathProblem();
+        initMemoryGame();
+        updateVolumeDisplay();
+
+        // Update window size display initially
+        document.getElementById('windowDisplay').textContent = `Window width: ${window.innerWidth}px | Volume: ${Math.round((window.innerWidth / (screen.width || 1920)) * 100)}%`;
+
+        // Easter egg: Double click anywhere to reset volume to 50
+        document.addEventListener('dblclick', function() {
+            currentVolume = 50;
+            updateVolumeDisplay();
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                slider.value = 50;
+            });
+        });
+    </script>
+</body>
+</html>
