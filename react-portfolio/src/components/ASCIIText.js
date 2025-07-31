@@ -200,9 +200,9 @@ class CanvasTxt {
     this.context.font = this.font;
     const metrics = this.context.measureText(this.txt);
 
-    const textWidth = Math.ceil(metrics.width) + 20;
+    const textWidth = Math.ceil(metrics.width) + 250;
     const textHeight =
-      Math.ceil(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) + 20;
+      Math.ceil(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) + 65;
 
     this.canvas.width = textWidth;
     this.canvas.height = textHeight;
@@ -214,9 +214,11 @@ class CanvasTxt {
     this.context.font = this.font;
 
     const metrics = this.context.measureText(this.txt);
-    const yPos = 10 + metrics.actualBoundingBoxAscent;
+    const textWidth = metrics.width;
+    const xPos = (this.canvas.width - textWidth) / 2;
+    const yPos = (this.canvas.height + metrics.actualBoundingBoxAscent) / 2;
 
-    this.context.fillText(this.txt, 10, yPos);
+    this.context.fillText(this.txt, xPos, yPos);
   }
 
   get width() {
