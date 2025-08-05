@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FaultyTerminal from './FaultyTerminal';
@@ -126,6 +127,7 @@ const Void = () => {
 
   return (
     <div style={{ position: 'relative' }}>
+      <SpeedInsights/>
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: -1 }}>
         <FaultyTerminal
           scale={3}

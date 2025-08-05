@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import Home from './components/Home';
 import Void from './components/Void';
 import './App.css';
@@ -13,6 +14,7 @@ function App() {
         <Route path="/void" element={<Void />} />
       </Routes>
       <Analytics />
+      <SpeedInsights />
     </Router>
   );
 }
