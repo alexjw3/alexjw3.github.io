@@ -9,8 +9,8 @@ const Hero = () => {
           <h1 className="hero-title">Hi, I'm <span className="highlight">Alex Wang</span></h1>
           <p className="hero-subtitle">CS @ Stanford | AI/ML</p>
           <p className="hero-description">
-            I'm a Stanford CS student working at the edge of AI/ML and systems engineering.
-            I've built tools for defense, finance, and healthcare and I'm deeply curious in virtually everything.
+            I'm a Stanford CS student working at the edge of Artificial Intelligence and Machine Learning.
+            I've built tools for cybersecurity, defense, finance, and healthcare and I'm deeply curious in virtually everything.
           </p>
           <div className="hero-buttons">
             <a href="#projects" className="btn btn-primary">View My Work</a>

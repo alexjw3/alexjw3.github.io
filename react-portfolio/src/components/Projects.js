@@ -14,9 +14,9 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://www.cyberhaven.com" target="_blank" rel="noopener noreferrer" className="project-link">Cyberhaven</a> (Internship)</h3>
+              <h3><a href="https://www.cyberhaven.com" target="_blank" rel="noopener noreferrer" className="project-link">Cyberhaven</a> AI/ML Research Intern</h3>
               <p><strong>Document Provenance Classifier</strong><br />
-              Created an LLM-driven classification system to infer document origin and ownership within enterprise settings. Used metadata, prompting strategies, and reasoning models to enable secure document lineage analysis.</p>
+              Created an LLM-driven classification system to infer document origin and ownership within enterprise settings. Used deep context engineering, SLM finetuning, and content matching to enable secure document lineage analysis.</p>
               <div className="project-tech">
                 <span>LLMs</span>
                 <span>Vertex AI</span>
@@ -33,7 +33,7 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3>VC Associate – Kyber Knight Capital</h3>
+              <h3><a href="https://kyberknight.com/" target="_blank" rel="noopener noreferrer" className="project-link">Kyber Knight</a>VC Associate</h3>
               <p>Conducted sourcing and diligence on AI-first startups across vertical SaaS, legal tech, and defense. Built internal tools for scraping market signals and evaluated technical products from founder-led companies.</p>
               <div className="project-tech">
                 <span>Startup Analysis</span>
@@ -52,7 +52,7 @@ const Projects = () => {
             </div>
             <div className="project-content">
               <h3>Hydra Strike (Hacking 4 Defense)</h3>
-              <p>Led strategy and system design for a modular undersea payload system in collaboration with the U.S. Navy. Conducted 40+ interviews with defense stakeholders to develop scalable alternatives to traditional torpedoes.</p>
+              <p>Led strategy and system design for a modular undersea payload system in collaboration with the U.S. Navy. Conducted 150+ interviews with defense stakeholders to develop scalable alternatives to traditional torpedoes.</p>
               <div className="project-tech">
                 <span>Defense Innovation</span>
                 <span>Stakeholder Research</span>
@@ -69,9 +69,8 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://alkymi.io" target="_blank" rel="noopener noreferrer" className="project-link">Alkymi</a> (Internship)</h3>
-              <p><strong>AI Intern</strong><br />
-              Built a feedback loop-powered fine-tuning pipeline for financial and legal document classification. Helped extend the company's NLP capabilities into the legal domain using LayoutLM, PyTorch, and PostgreSQL.</p>
+              <h3><a href="https://alkymi.io" target="_blank" rel="noopener noreferrer" className="project-link">Alkymi</a> Data Science/ML Intern</h3>
+              <p>Built a feedback loop-powered fine-tuning pipeline for financial and legal document classification. Helped extend the company's NLP capabilities into the legal domain using LayoutLM, PyTorch, and PostgreSQL.</p>
               <div className="project-tech">
                 <span>LayoutLM</span>
                 <span>PyTorch</span>
@@ -88,9 +87,8 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://www.silverlake.com" target="_blank" rel="noopener noreferrer" className="project-link">Silver Lake</a> (Internship)</h3>
-              <p><strong>Summer Analyst</strong> | June 2023 - August 2023<br />
-              Worked as a private equity intern for premier technology investment firm. Developed growth strategies for portfolio companies Zuora, Unity, OVG, and Qualtrics.</p>
+              <h3><a href="https://www.silverlake.com" target="_blank" rel="noopener noreferrer" className="project-link">Silver Lake</a> Summer Analyst</h3>
+              <p>Worked as a private equity intern for premier technology investment firm. Developed growth strategies for portfolio companies Zuora, Unity, OVG, and Qualtrics.</p>
               <div className="project-tech">
                 <span>Private Equity</span>
                 <span>Growth Strategy</span>
@@ -107,9 +105,8 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://cardinalventures.org" target="_blank" rel="noopener noreferrer" className="project-link">Cardinal Ventures</a></h3>
-              <p><strong>Alumni and Sponsor Relations</strong> | August 2022 - Present<br />
-              Created relationships with program alumni as well as raised funding from law, banking, and venture capital sponsors. Supporting student entrepreneurs with a community of founders and a worldwide network of mentors and investors.</p>
+              <h3><a href="https://cardinalventures.org" target="_blank" rel="noopener noreferrer" className="project-link">Cardinal Ventures</a> Vice President, Alumni and Sponsor Relations</h3>
+              <p>Created relationships with program alumni as well as raised funding from law, banking, and venture capital sponsors. Supporting student entrepreneurs with a community of founders and a worldwide network of mentors and investors.</p>
               <div className="project-tech">
                 <span>Alumni Relations</span>
                 <span>Fundraising</span>
@@ -126,9 +123,8 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://www.amescapital.com" target="_blank" rel="noopener noreferrer" className="project-link">Ames Capital Partners</a></h3>
-              <p><strong>Search Fund Analyst</strong> | August 2023 - February 2024<br />
-              Driving data analysis, industry research, and acquisition sourcing for search fund. Conducting data analysis and industry research to guide strategic investment decisions and identify opportunities.</p>
+              <h3><a href="https://www.amescapital.com" target="_blank" rel="noopener noreferrer" className="project-link">Ames Capital Partners</a> Search Fund Analyst</h3>
+              <p>Driving data analysis, industry research, and acquisition sourcing for search fund. Conducting data analysis and industry research to guide strategic investment decisions and identify opportunities.</p>
               <div className="project-tech">
                 <span>Data Analysis</span>
                 <span>Investment Research</span>
@@ -145,9 +141,8 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://www.influxdata.com" target="_blank" rel="noopener noreferrer" className="project-link">InfluxData</a> (Internship)</h3>
-              <p><strong>Software Intern</strong> | June 2022 - September 2022<br />
-              Developed data visualization tools for the Chronograf product for the InfluxDB, the leading time-series database.</p>
+              <h3><a href="https://www.influxdata.com" target="_blank" rel="noopener noreferrer" className="project-link">InfluxData</a> Software Intern</h3>
+              <p>Developed data visualization tools for the Chronograf product for the InfluxDB, the leading time-series database.</p>
               <div className="project-tech">
                 <span>Data Visualization</span>
                 <span>Time-Series DB</span>
@@ -164,9 +159,8 @@ const Projects = () => {
               </div>
             </div>
             <div className="project-content">
-              <h3><a href="https://www.ucsc.edu" target="_blank" rel="noopener noreferrer" className="project-link">Science Internship Program at UCSC</a></h3>
-              <p><strong>Research Assistant, Department of Astrophysics and Astronomy</strong> | May 2020 - January 2021<br />
-              Trained models for post-doctoral student writing thesis on RR-Lyrae stars, presented to American Astronomical Society.</p>
+              <h3><a href="https://www.ucsc.edu" target="_blank" rel="noopener noreferrer" className="project-link">Science Internship Program at UCSC</a> Research Assistant, Department of Astrophysics and Astronomy</h3>
+              <p>Trained models for post-doctoral student writing thesis on RR-Lyrae stars, presented to American Astronomical Society.</p>
               <div className="project-tech">
                 <span>Astrophysics</span>
                 <span>Machine Learning</span>
