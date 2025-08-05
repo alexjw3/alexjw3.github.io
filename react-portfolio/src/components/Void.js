@@ -1,4 +1,4 @@
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FaultyTerminal from './FaultyTerminal';
