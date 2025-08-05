@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Circle Challenge | Alex Wang</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b4e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(101, 67, 33, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(222, 184, 135, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            animation: voidShift 20s ease-in-out infinite;
+        }
+
+        @keyframes voidShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .circle-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            color: #deb887;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 24px;
+            padding: 12px 20px;
+            border: 2px solid #8b4513;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .circle-back:hover {
+            background: rgba(139, 69, 19, 0.4);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .circle-container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .circle-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #deb887;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            text-shadow: 0 0 30px rgba(222, 184, 135, 0.3);
+            animation: voidGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes voidGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(222, 184, 135, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(222, 184, 135, 0.6); }
+        }
+
+        .circle-subtitle {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            font-weight: 300;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+
+        .canvas-container {
+            position: relative;
+            margin: 32px auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.3);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .canvas-container:hover {
+            border-color: rgba(222, 184, 135, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #drawingCanvas {
+            border-radius: 12px;
+            cursor: crosshair;
+            background: #1a1a3a;
+            border: 2px solid rgba(222, 184, 135, 0.2);
+            transition: border-color 0.3s ease;
+        }
+
+        #drawingCanvas:hover {
+            border-color: rgba(222, 184, 135, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+            background: linear-gradient(135deg, #ea580c, #dc2626);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 69, 19, 0.2);
+            color: #deb887;
+            border: 2px solid #8b4513;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(139, 69, 19, 0.4);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .score-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px auto;
+            max-width: 400px;
+            transition: all 0.3s ease;
+        }
+
+        .score-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #deb887;
+            margin-bottom: 8px;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #f97316, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-description {
+            font-size: 1rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #8b4513;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px auto;
+            max-width: 500px;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .circle-title {
+                font-size: 2rem;
+            }
+            
+            #drawingCanvas {
+                width: 280px !important;
+                height: 280px !important;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="void.html" class="circle-back">← Back to the Void</a>
+    
+    <div class="circle-container">
+        <h1 class="circle-title">Perfect Circle Challenge</h1>
+        <p class="circle-subtitle">Draw the most perfect circle you can. How close can you get?</p>
+        
+        <div class="instructions">
+            Click and drag to draw a circle. Release to see your score. The algorithm analyzes your shape's circularity using mathematical precision.
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="drawingCanvas" width="400" height="400"></canvas>
+        </div>
+        
+        <div class="controls">
+            <button id="clearBtn" class="btn btn-secondary">Clear Canvas</button>
+            <button id="gradeBtn" class="btn btn-primary" style="display: none;">Grade My Circle</button>
+        </div>
+        
+        <div id="scoreContainer" class="score-container hidden">
+            <div class="score-text">Your Circle Score</div>
+            <div id="scoreValue" class="score-value">--</div>
+            <div id="scoreDescription" class="score-description">Draw a circle to get your score!</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const clearBtn = document.getElementById('clearBtn');
+        const gradeBtn = document.getElementById('gradeBtn');
+        const scoreContainer = document.getElementById('scoreContainer');
+        const scoreValue = document.getElementById('scoreValue');
+        const scoreDescription = document.getElementById('scoreDescription');
+        
+        let isDrawing = false;
+        let points = [];
+        let startX, startY;
+        
+        // Set up canvas
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#f97316';
+        
+        // Drawing functions
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            startDrawing({offsetX: x, offsetY: y});
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            draw({offsetX: x, offsetY: y});
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            stopDrawing();
+        });
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+            points = [{x: startX, y: startY}];
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const currentX = e.offsetX;
+            const currentY = e.offsetY;
+            
+            points.push({x: currentX, y: currentY});
+            
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            
+            if (points.length > 10) {
+                gradeBtn.style.display = 'block';
+                setTimeout(() => gradeCircle(), 500);
+            }
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            points = [];
+            gradeBtn.style.display = 'none';
+            scoreContainer.classList.remove('visible');
+            scoreContainer.classList.add('hidden');
+        }
+        
+        function gradeCircle() {
+            if (points.length < 20) return;
+            
+            // Remove duplicate points and smooth the path
+            const smoothedPoints = smoothPath(removeDuplicates(points));
+            if (smoothedPoints.length < 15) return;
+            
+            // Find optimal circle center using least squares method
+            const optimalCenter = findOptimalCenter(smoothedPoints);
+            
+            // Calculate distances from optimal center
+            const distances = smoothedPoints.map(point => 
+                Math.sqrt((point.x - optimalCenter.x) ** 2 + (point.y - optimalCenter.y) ** 2)
+            );
+            
+            // Calculate statistics
+            const avgRadius = distances.reduce((sum, d) => sum + d, 0) / distances.length;
+            const variance = distances.reduce((sum, d) => sum + (d - avgRadius) ** 2, 0) / distances.length;
+            const stdDev = Math.sqrt(variance);
+            const coefficientOfVariation = stdDev / avgRadius;
+            
+            // Check for completeness (how much of a full circle is drawn)
+            const completeness = calculateCompleteness(smoothedPoints, optimalCenter);
+            
+            // Check for smoothness (no sharp turns)
+            const smoothness = calculateSmoothness(smoothedPoints);
+            
+            // Multi-factor scoring
+            let score = 0;
+            
+            // Circularity score (60% weight) - based on radius consistency
+            const circularityScore = Math.max(0, 100 * (1 - Math.min(1, coefficientOfVariation * 8)));
+            score += circularityScore * 0.6;
+            
+            // Completeness score (25% weight) - how much of circle is drawn
+            score += completeness * 0.25;
+            
+            // Smoothness score (15% weight) - penalize jagged lines
+            score += smoothness * 0.15;
+            
+            // Bonus for very circular shapes
+            if (coefficientOfVariation < 0.1 && completeness > 80) {
+                score += 5;
+            }
+            
+            // Cap at 100 and ensure minimum of 0
+            score = Math.max(0, Math.min(100, Math.round(score)));
+            
+            // Display score
+            displayScore(score);
+        }
+        
+        function removeDuplicates(points) {
+            const filtered = [];
+            const threshold = 3; // Minimum distance between points
+            
+            filtered.push(points[0]);
+            for (let i = 1; i < points.length; i++) {
+                const lastPoint = filtered[filtered.length - 1];
+                const distance = Math.sqrt(
+                    (points[i].x - lastPoint.x) ** 2 + (points[i].y - lastPoint.y) ** 2
+                );
+                if (distance >= threshold) {
+                    filtered.push(points[i]);
+                }
+            }
+            return filtered;
+        }
+        
+        function smoothPath(points) {
+            if (points.length < 5) return points;
+            
+            const smoothed = [points[0]];
+            for (let i = 2; i < points.length - 2; i++) {
+                // Simple moving average smoothing
+                const smoothX = (points[i-2].x + points[i-1].x + points[i].x + points[i+1].x + points[i+2].x) / 5;
+                const smoothY = (points[i-2].y + points[i-1].y + points[i].y + points[i+1].y + points[i+2].y) / 5;
+                smoothed.push({x: smoothX, y: smoothY});
+            }
+            smoothed.push(points[points.length - 1]);
+            return smoothed;
+        }
+        
+        function findOptimalCenter(points) {
+            // Use least squares circle fitting
+            let sumX = 0, sumY = 0, sumXX = 0, sumYY = 0, sumXY = 0;
+            let sumXXX = 0, sumXYY = 0, sumXXY = 0, sumYYY = 0;
+            
+            for (const point of points) {
+                const x = point.x, y = point.y;
+                sumX += x;
+                sumY += y;
+                sumXX += x * x;
+                sumYY += y * y;
+                sumXY += x * y;
+                sumXXX += x * x * x;
+                sumXYY += x * y * y;
+                sumXXY += x * x * y;
+                sumYYY += y * y * y;
+            }
+            
+            const n = points.length;
+            const A = n * sumXX - sumX * sumX;
+            const B = n * sumXY - sumX * sumY;
+            const C = n * sumYY - sumY * sumY;
+            const D = 0.5 * (n * sumXYY - sumX * sumYY + n * sumXXX - sumX * sumXX);
+            const E = 0.5 * (n * sumXXY - sumY * sumXX + n * sumYYY - sumY * sumYY);
+            
+            const denominator = A * C - B * B;
+            
+            if (Math.abs(denominator) < 1e-10) {
+                // Fallback to centroid
+                return {
+                    x: sumX / n,
+                    y: sumY / n
+                };
+            }
+            
+            return {
+                x: (D * C - B * E) / denominator,
+                y: (A * E - B * D) / denominator
+            };
+        }
+        
+        function calculateCompleteness(points, center) {
+            if (points.length < 10) return 0;
+            
+            // Calculate angles from center for each point
+            const angles = points.map(point => 
+                Math.atan2(point.y - center.y, point.x - center.x)
+            );
+            
+            // Normalize angles to [0, 2π]
+            const normalizedAngles = angles.map(angle => angle < 0 ? angle + 2 * Math.PI : angle);
+            
+            // Sort angles
+            normalizedAngles.sort((a, b) => a - b);
+            
+            // Find the largest gap
+            let maxGap = 0;
+            for (let i = 1; i < normalizedAngles.length; i++) {
+                const gap = normalizedAngles[i] - normalizedAngles[i - 1];
+                maxGap = Math.max(maxGap, gap);
+            }
+            
+            // Check wrap-around gap
+            const wrapGap = (2 * Math.PI) - normalizedAngles[normalizedAngles.length - 1] + normalizedAngles[0];
+            maxGap = Math.max(maxGap, wrapGap);
+            
+            // Score based on largest gap (smaller gap = more complete circle)
+            const completeness = Math.max(0, 100 * (1 - maxGap / Math.PI));
+            return completeness;
+        }
+        
+        function calculateSmoothness(points) {
+            if (points.length < 3) return 100;
+            
+            let totalAngleChange = 0;
+            let maxAngleChange = 0;
+            
+            for (let i = 1; i < points.length - 1; i++) {
+                const prev = points[i - 1];
+                const curr = points[i];
+                const next = points[i + 1];
+                
+                // Calculate vectors
+                const v1 = {x: curr.x - prev.x, y: curr.y - prev.y};
+                const v2 = {x: next.x - curr.x, y: next.y - curr.y};
+                
+                // Calculate angle between vectors
+                const dot = v1.x * v2.x + v1.y * v2.y;
+                const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+                const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+                
+                if (mag1 > 0 && mag2 > 0) {
+                    const cosAngle = Math.max(-1, Math.min(1, dot / (mag1 * mag2)));
+                    const angleChange = Math.acos(cosAngle);
+                    totalAngleChange += angleChange;
+                    maxAngleChange = Math.max(maxAngleChange, angleChange);
+                }
+            }
+            
+            // Penalize sharp turns and jagged lines
+            const avgAngleChange = totalAngleChange / (points.length - 2);
+            const smoothness = Math.max(0, 100 * (1 - (avgAngleChange + maxAngleChange * 0.5) / Math.PI));
+            
+            return smoothness;
+        }
+        
+        function displayScore(score) {
+            scoreValue.textContent = score + '%';
+            
+            let description = '';
+            let color = '#f97316';
+            
+            if (score >= 95) {
+                description = "dayum!";
+                color = '#10b981';
+            } else if (score >= 85) {
+                description = "closer";
+                color = '#3b82f6';
+            } else if (score >= 75) {
+                description = "suspiciously round";
+                color = '#8b5cf6';
+            } else if (score >= 60) {
+                description = "ish";
+                color = '#f59e0b';
+            } else if (score >= 40) {
+                description = "OK?";
+                color = '#f97316';
+            } else {
+                description = "You suck";
+                color = '#ef4444';
+            }
+            
+            scoreDescription.textContent = description;
+            scoreValue.style.background = `linear-gradient(135deg, ${color}, #fbbf24)`;
+            scoreValue.style.webkitBackgroundClip = 'text';
+            scoreValue.style.webkitTextFillColor = 'transparent';
+            scoreValue.style.backgroundClip = 'text';
+            
+            scoreContainer.classList.remove('hidden');
+            scoreContainer.classList.add('visible');
+        }
+        
+        // Event listeners
+        clearBtn.addEventListener('click', clearCanvas);
+        gradeBtn.addEventListener('click', gradeCircle);
+    </script>
+</body>
+</html>

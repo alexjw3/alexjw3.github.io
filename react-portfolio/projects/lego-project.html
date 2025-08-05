@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Generated LEGO Instructions | Alex Wang</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b4e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(101, 67, 33, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(222, 184, 135, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            animation: voidShift 20s ease-in-out infinite;
+        }
+
+        @keyframes voidShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .lego-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            color: #deb887;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 24px;
+            padding: 12px 20px;
+            border: 2px solid #8b4513;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .lego-back:hover {
+            background: rgba(139, 69, 19, 0.4);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .lego-container {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 0 24px;
+        }
+
+        .lego-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #deb887;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            text-shadow: 0 0 30px rgba(222, 184, 135, 0.3);
+            animation: voidGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes voidGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(222, 184, 135, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(222, 184, 135, 0.6); }
+        }
+
+        .lego-subtitle {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            font-weight: 300;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+
+        .project-description {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+            text-align: left;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .description-title {
+            font-size: 1.3rem;
+            color: #deb887;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .resource-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .resource-card:hover {
+            border-color: rgba(222, 184, 135, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .resource-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #deb887;
+            margin-bottom: 12px;
+        }
+
+        .resource-description {
+            color: #cbd5e1;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .resource-type {
+            display: inline-block;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .methodology {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #8b4513;
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+
+        .methodology h3 {
+            color: #deb887;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .methodology ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .methodology li {
+            color: #cbd5e1;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .methodology li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #f97316;
+        }
+
+        @media (max-width: 768px) {
+            .lego-title {
+                font-size: 2rem;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-description,
+            .resource-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="void.html" class="lego-back">← Back to the Void</a>
+    
+    <div class="lego-container">
+        <h1 class="lego-title">AI-Generated LEGO Instructions</h1>
+        <p class="lego-subtitle">CS224N Natural Language Processing Project</p>
+        
+        <div class="project-description">
+            <h2 class="description-title">Project Overview</h2>
+            <p>This project introduces a multifaceted approach to generating novel LEGO instruction manuals in a text-based format. We leverage the vision capabilities of GPT-4o and fine-tune models such as GPT-3.5-turbo, Llama-2-7B-chat-hf, and Mistral-7B using a corpus of 90 existing text-based LEGO manuals.</p>
+            
+            <div class="methodology">
+                <h3>Key Contributions</h3>
+                <ul>
+                    <li>Novel vision-to-text agent for LEGO instruction generation</li>
+                    <li>Custom dataset of text-based instructions for Bricks for the Blind</li>
+                    <li>Fine-tuned models generating instructions for cars, castles, houses, boats, and spaceships</li>
+                    <li>Dual evaluation system with GPT-4o and human scoring</li>
+                    <li>Translation of visual LEGO instructions into accessible text format</li>
+                </ul>
+            </div>
+            
+            <p>Results show that GPT-4o and fine-tuned LLama-2-7B showed the most promise in novel instruction generation, highlighting both the creative potential of LLMs and their current limitations in planning, creativity, and instruction generation.</p>
+            <h2 class="description-title">Looking back on this project also reveals that since May 2024 this sort of fine tuning isn't necessary. Man things are moving fast!</h2>
+        </div>
+        
+        
+        <div class="resources-grid">
+            <a href="CS224N/CS224N_Project_Final_Report.pdf" class="resource-card" target="_blank">
+                <div class="resource-title">Final Report</div>
+                <div class="resource-description">
+                    Comprehensive documentation of our methodology, experiments, and results. Includes detailed analysis of model performance, evaluation metrics, and future work.
+                </div>
+                <span class="resource-type">PDF Report</span>
+            </a>
+            
+            <a href="CS224N/CS224N Lego Poster (1).pdf" class="resource-card" target="_blank">
+                <div class="resource-title">Research Poster</div>
+                <div class="resource-description">
+                    Visual presentation summarizing our approach, key findings, and impact on accessibility in LEGO instruction generation.
+                </div>
+                <span class="resource-type">PDF Poster</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

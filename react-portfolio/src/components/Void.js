@@ -16,31 +16,31 @@ const projects = [
     id: "002",
     title: "Alexander Wang Collection",
     description: "A curated catalog documenting notable individuals named Alexander Wang across various fields and industries. An exploration of shared identity and diverse achievements.",
-    link: "https://alexjw3.github.io/alexander-wangs.html"
+    link: "https://alexjw3.github.io/react-portfolio/projects/alexander-wangs.html"
   },
   {
     id: "003",
     title: "Perfect Circle Challenge",
     description: "Test your drawing precision with this mathematical accuracy tool. Real-time scoring algorithms evaluate circular drawing skills with detailed performance metrics.",
-    link: "https://alexjw3.github.io/circle-grader.html"
+    link: "https://alexjw3.github.io/react-portfolio/projects/circle-grader.html"
   },
   {
     id: "004",
     title: "AI-Generated LEGO Instructions",
     description: "CS224N project leveraging GPT-4o vision and fine-tuned language models to generate accessible LEGO instruction manuals. Bridging computer vision and natural language processing.",
-    link: "https://alexjw3.github.io/lego-project.html"
+    link: "https://alexjw3.github.io/react-portfolio/projects/lego-project.html"
   },
   {
     id: "005",
     title: "Forest Terrarium",
     description: "An interactive ecosystem simulation featuring seasonal cycles, tree growth algorithms, and real-time environmental changes. Watch digital nature evolve through multiple seasons. [BROKEN - working on fixes]",
-    link: "https://alexjw3.github.io/terrarium.html"
+    link: "https://alexjw3.github.io/react-portfolio/projects/terrarium.html"
   },
   {
     id: "006",
     title: "Volume Project",
     description: "An experimental audio control interface featuring unconventional volume manipulation methods. Test your patience with deliberately chaotic user interactions and creative audio visualization. [BROKEN - working on fixes]",
-    link: "https://alexjw3.github.io/rickroll.html"
+    link: "https://alexjw3.github.io/react-portfolio/projects/rickroll.html"
   }
 ];
 

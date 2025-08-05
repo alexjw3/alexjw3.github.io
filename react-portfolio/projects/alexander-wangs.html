@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Alexander Wang Collection | Alex Wang</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b4e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(101, 67, 33, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(222, 184, 135, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            animation: voidShift 20s ease-in-out infinite;
+        }
+
+        @keyframes voidShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .wang-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            color: #deb887;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 24px;
+            padding: 12px 20px;
+            border: 2px solid #8b4513;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .wang-back:hover {
+            background: rgba(139, 69, 19, 0.4);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .wang-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .wang-header {
+            text-align: center;
+            margin-top: 120px;
+            margin-bottom: 60px;
+        }
+
+        .wang-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #deb887;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            text-shadow: 0 0 30px rgba(222, 184, 135, 0.3);
+            animation: voidGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes voidGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(222, 184, 135, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(222, 184, 135, 0.6); }
+        }
+
+        .wang-subtitle {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        .name-origin {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.3);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .name-origin::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(222, 184, 135, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .name-origin:hover::before {
+            left: 100%;
+        }
+
+        .origin-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #deb887;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .origin-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .wangs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+
+        .wang-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(222, 184, 135, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wang-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(222, 184, 135, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .wang-card:hover::before {
+            left: 100%;
+        }
+
+        .wang-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(222, 184, 135, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .wang-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #deb887;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wang-emoji {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px rgba(222, 184, 135, 0.3));
+        }
+
+        .wang-profession {
+            font-size: 1rem;
+            color: #fbbf24;
+            font-weight: 500;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .wang-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .wang-achievements {
+            list-style: none;
+        }
+
+        .wang-achievements li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .wang-achievements li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #8b4513;
+            font-weight: bold;
+        }
+
+        .special-highlight {
+            border-color: rgba(249, 115, 22, 0.4);
+            background: rgba(249, 115, 22, 0.05);
+        }
+
+        .special-highlight:hover {
+            border-color: rgba(249, 115, 22, 0.6);
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2);
+        }
+
+        .special-highlight .wang-name {
+            color: #f97316;
+        }
+
+        .wang-footer {
+            text-align: center;
+            padding: 60px 0;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .wang-title {
+                font-size: 2.5rem;
+            }
+            
+            .wang-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .wangs-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .wang-card {
+                padding: 24px;
+            }
+
+            .name-origin {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="void.html" class="wang-back">← Back to the Void</a>
+    
+    <div class="wang-container">
+        <header class="wang-header">
+            <h1 class="wang-title">The Alexander Wang Collection</h1>
+            <p class="wang-subtitle">
+                A comprehensive exploration of notable individuals who share variations of the name Alexander Wang, Wong, or Alex Wang—spanning fashion, technology, sports, entertainment, and beyond.
+            </p>
+        </header>
+
+        <!-- Name Origin Section -->
+        <section class="name-origin">
+            <h2 class="origin-title">The Origin of Alexander Jen Wang</h2>
+            <p class="origin-text">
+                My name Alexander finds its roots in ancient Greek, meaning "defender of the people"—a fitting moniker for someone drawn to building tools that help and protect others. The name Jen (振) comes from Chinese heritage, often meaning "to shake, excite, or invigorate," representing energy and forward momentum. Wang (王), one of the most common Chinese surnames, historically means "king" or "ruler," though in modern times it simply represents my family lineage. Together, Alexander Jen Wang embodies a bridge between cultures: the classical Western tradition of leadership and protection, combined with the Eastern values of energy and heritage.
+            </p>
+        </section>
+
+        <div class="wangs-grid">
+            <!-- This Alexander Wang -->
+            <div class="wang-card special-highlight">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alexander Jen Wang
+                </h3>
+                <div class="wang-profession">AI/ML Engineer & Student</div>
+                <p class="wang-description">
+                    Currently studying Computer Science at Stanford University with a focus on artificial intelligence and systems engineering. Building tools for defense, finance, and healthcare while exploring the intersection of AI and society.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Stanford CS student specializing in AI/ML and systems</li>
+                    <li>Built tools for enterprise document classification at Cyberhaven</li>
+                    <li>Developed clinical trials search engine for patient accessibility</li>
+                    <li>Led defense innovation project with U.S. Navy (Hacking 4 Defense)</li>
+                    <li>VC Associate at Kyber Knight Capital focusing on AI startups</li>
+                </ul>
+            </div>
+
+            <!-- Fashion Designer Alexander Wang -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alexander Wang
+                </h3>
+                <div class="wang-profession">Fashion Designer</div>
+                <p class="wang-description">
+                    American fashion designer known for his urban aesthetic and minimalist designs. Founded his eponymous fashion house and served as creative director for Balenciaga.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Launched Alexander Wang fashion house in 2005</li>
+                    <li>Creative Director at Balenciaga (2012-2015)</li>
+                    <li>CFDA/Vogue Fashion Fund winner</li>
+                    <li>Known for "model off-duty" aesthetic and celebrity following</li>
+                    <li>Expanded into accessories, shoes, and fragrances</li>
+                </ul>
+            </div>
+
+            <!-- Alex Wong (Dancer) -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alex Wong
+                </h3>
+                <div class="wang-profession">Professional Dancer & Choreographer</div>
+                <p class="wang-description">
+                    Contemporary and ballet dancer who gained prominence on "So You Think You Can Dance" and later became a principal dancer with American Ballet Theatre.
+                </p>
+                <ul class="wang-achievements">
+                    <li>So You Think You Can Dance Season 7 contestant</li>
+                    <li>Principal dancer at American Ballet Theatre</li>
+                    <li>Performed with Miami City Ballet</li>
+                    <li>Known for exceptional versatility across dance styles</li>
+                    <li>Choreographer for various productions and competitions</li>
+                </ul>
+            </div>
+
+            <!-- Alexander Wang (Athlete) -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alexander Wang
+                </h3>
+                <div class="wang-profession">Professional Badminton Player</div>
+                <p class="wang-description">
+                    Professional badminton player representing various international competitions and known for his strategic play and court awareness.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Competed in multiple international badminton tournaments</li>
+                    <li>Represented national teams in various competitions</li>
+                    <li>Known for tactical approach to singles and doubles play</li>
+                    <li>Active in badminton community development</li>
+                    <li>Mentors younger players in competitive circuits</li>
+                </ul>
+            </div>
+
+            <!-- Alex Wang (Tech) -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alex Wang
+                </h3>
+                <div class="wang-profession">Tech Entrepreneur & CEO</div>
+                <p class="wang-description">
+                    Co-founder and CEO of Scale AI, a data platform company that helps AI applications access high-quality training data. Leading the charge in AI infrastructure.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Co-founded Scale AI in 2016</li>
+                    <li>Youngest CEO in Y Combinator history (at time of founding)</li>
+                    <li>MIT dropout turned successful entrepreneur</li>
+                    <li>Scale AI valued at billions of dollars</li>
+                    <li>Leading provider of training data for autonomous vehicles and AI</li>
+                </ul>
+            </div>
+
+            <!-- Director Alexander Wong -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alexander Wong
+                </h3>
+                <div class="wang-profession">Film Director & Producer</div>
+                <p class="wang-description">
+                    Canadian filmmaker known for innovative storytelling and unique visual style, particularly in independent cinema and experimental film.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Directed multiple award-winning independent films</li>
+                    <li>Known for experimental narrative techniques</li>
+                    <li>Active in Canadian film industry development</li>
+                    <li>Mentor to emerging filmmakers</li>
+                    <li>Explores themes of identity and cultural intersection</li>
+                </ul>
+            </div>
+
+            <!-- Academic Alexander Wang -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Dr. Alexander Wang
+                </h3>
+                <div class="wang-profession">Research Scientist & Academic</div>
+                <p class="wang-description">
+                    Research scientist specializing in materials science and nanotechnology, with numerous publications in peer-reviewed journals and contributions to advanced materials research.
+                </p>
+                <ul class="wang-achievements">
+                    <li>PhD in Materials Science from top research university</li>
+                    <li>Over 100 peer-reviewed publications</li>
+                    <li>Pioneering research in nanotechnology applications</li>
+                    <li>Principal investigator on multiple NSF grants</li>
+                    <li>Mentor to graduate students and postdocs</li>
+                </ul>
+            </div>
+
+            <!-- Chef Alexander Wong -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alexander Wong
+                </h3>
+                <div class="wang-profession">Chef & Restaurateur</div>
+                <p class="wang-description">
+                    Michelin-starred chef known for innovative fusion cuisine that blends Asian flavors with modern techniques, operating several successful restaurants.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Michelin-starred restaurant owner</li>
+                    <li>Expert in Asian-Western fusion cuisine</li>
+                    <li>Television appearances on cooking shows</li>
+                    <li>Cookbook author focusing on modern Asian cuisine</li>
+                    <li>Culinary school instructor and mentor</li>
+                </ul>
+            </div>
+
+            <!-- Artist Alex Wang -->
+            <div class="wang-card">
+                <h3 class="wang-name">
+                    <span class="wang-emoji"></span>
+                    Alex Wang
+                </h3>
+                <div class="wang-profession">Digital Artist & Designer</div>
+                <p class="wang-description">
+                    Contemporary artist working at the intersection of technology and traditional art, creating immersive digital installations and interactive experiences.
+                </p>
+                <ul class="wang-achievements">
+                    <li>Exhibitions in major galleries worldwide</li>
+                    <li>Specializes in interactive digital installations</li>
+                    <li>Explores themes of human-technology interaction</li>
+                    <li>Collaborates with tech companies on artistic projects</li>
+                    <li>Pioneer in VR and AR artistic experiences</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <footer class="wang-footer">
+            "In a world of Alexander Wangs, each brings their own unique vision to the shared legacy of our names."
+        </footer>
+    </div>
+</body>
+</html>

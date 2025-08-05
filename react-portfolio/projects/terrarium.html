@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Terrarium | Alex Wang</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+
+        #terrarium {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .ui-overlay {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 1000;
+            color: #ffffff;
+            font-size: 14px;
+            pointer-events: none;
+            font-weight: 500;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+            padding: 20px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transform: translateZ(0);
+        }
+
+        .ui-overlay > div:first-child {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ui-overlay > div:not(:first-child) {
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .tree-palette {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+            padding: 20px 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .tree-option {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .tree-option::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .tree-option:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 12px 28px rgba(0, 0, 0, 0.2),
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tree-option:hover::before {
+            opacity: 1;
+        }
+
+        .tree-option.selected {
+            background: linear-gradient(135deg, rgba(129, 199, 132, 0.4) 0%, rgba(76, 175, 80, 0.2) 100%);
+            border-color: rgba(129, 199, 132, 0.8);
+            box-shadow: 
+                0 8px 24px rgba(76, 175, 80, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .tree-option.selected::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+        }
+
+        .back-link {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 20px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            letter-spacing: 0.3px;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .back-link:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .back-link:active {
+            transform: translateY(0);
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 32px;
+            right: 24px;
+            z-index: 1000;
+            color: #ffffff;
+            font-size: 13px;
+            text-align: right;
+            opacity: 0.9;
+            pointer-events: none;
+            font-weight: 400;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: fadeInRight 1s ease-out 0.5s both;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        .instructions > div {
+            margin-bottom: 4px;
+        }
+
+        .instructions > div:last-child {
+            margin-bottom: 0;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                transform: translateX(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg); }
+            75% { transform: rotate(-1deg); }
+        }
+
+        @keyframes grow {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .tree {
+            animation: grow 2s ease-out;
+        }
+
+        .tree.mature {
+            animation: sway 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="terrarium"></canvas>
+    
+    <div class="ui-overlay">
+        <div style="font-size: 16px; margin-bottom: 8px; color: rgba(60, 120, 60, 1);">🌱 Forest Terrarium</div>
+        <div>Trees: <span id="tree-count">0</span></div>
+        <div>Biodiversity: <span id="diversity-level">0</span>%</div>
+        <div>Season: <span id="season">Spring</span></div>
+    </div>
+
+    <div class="tree-palette">
+        <div class="tree-option selected" data-tree="oak" title="Oak Tree">🌳</div>
+        <div class="tree-option" data-tree="pine" title="Pine Tree">🌲</div>
+        <div class="tree-option" data-tree="birch" title="Birch Tree">🌴</div>
+        <div class="tree-option" data-tree="maple" title="Maple Tree">🍁</div>
+        <div class="tree-option" data-tree="willow" title="Willow Tree">🌿</div>
+        <div class="tree-option" data-tree="cherry" title="Cherry Tree">🌸</div>
+    </div>
+
+    <div class="instructions">
+        <div>Select a tree type below</div>
+        <div>Click to plant in the forest</div>
+        <div>Watch your ecosystem grow</div>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+
+    <script>
+        class ForestTerrarium {
+            constructor() {
+                this.canvas = document.getElementById('terrarium');
+                this.ctx = this.canvas.getContext('2d');
+                this.trees = [];
+                this.particles = [];
+                this.selectedTreeType = 'oak';
+                this.groundLevel = 0;
+                this.season = 'spring';
+                this.seasonProgress = 0;
+                this.time = 0;
+                this.dayProgress = 0;
+                this.yearProgress = 0;
+                
+                this.treeTypes = {
+                    oak: { 
+                        baseColor: '#228B22', 
+                        trunkColor: '#8B4513', 
+                        canopyShape: 'round', 
+                        size: 1.0,
+                        seasonalColors: {
+                            spring: '#32CD32',
+                            summer: '#228B22', 
+                            autumn: '#FF8C00',
+                            winter: '#696969'
+                        }
+                    },
+                    pine: { 
+                        baseColor: '#006400', 
+                        trunkColor: '#654321', 
+                        canopyShape: 'triangle', 
+                        size: 1.2,
+                        seasonalColors: {
+                            spring: '#228B22',
+                            summer: '#006400',
+                            autumn: '#2F4F2F',
+                            winter: '#2F4F2F'
+                        }
+                    },
+                    birch: { 
+                        baseColor: '#90EE90', 
+                        trunkColor: '#F5F5DC', 
+                        canopyShape: 'oval', 
+                        size: 0.8,
+                        seasonalColors: {
+                            spring: '#ADFF2F',
+                            summer: '#90EE90',
+                            autumn: '#FFD700',
+                            winter: '#D3D3D3'
+                        }
+                    },
+                    maple: { 
+                        baseColor: '#FF6347', 
+                        trunkColor: '#8B4513', 
+                        canopyShape: 'maple', 
+                        size: 1.1,
+                        seasonalColors: {
+                            spring: '#32CD32',
+                            summer: '#228B22',
+                            autumn: '#DC143C',
+                            winter: '#8B4513'
+                        }
+                    },
+                    willow: { 
+                        baseColor: '#9ACD32', 
+                        trunkColor: '#8B4513', 
+                        canopyShape: 'weeping', 
+                        size: 1.3,
+                        seasonalColors: {
+                            spring: '#ADFF2F',
+                            summer: '#9ACD32',
+                            autumn: '#DAA520',
+                            winter: '#556B2F'
+                        }
+                    },
+                    cherry: { 
+                        baseColor: '#FFB6C1', 
+                        trunkColor: '#8B4513', 
+                        canopyShape: 'round', 
+                        size: 0.9,
+                        seasonalColors: {
+                            spring: '#FF69B4',
+                            summer: '#228B22',
+                            autumn: '#FF6347',
+                            winter: '#8B4513'
+                        }
+                    }
+                };
+                
+                this.init();
+                this.setupEventListeners();
+                this.animate();
+            }
+
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.groundLevel = this.canvas.height * 0.8;
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.groundLevel = this.canvas.height * 0.8;
+            }
+
+            setupEventListeners() {
+                // Tree selection
+                document.querySelectorAll('.tree-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        document.querySelectorAll('.tree-option').forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        this.selectedTreeType = option.dataset.tree;
+                    });
+                });
+
+                // Planting trees
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Only plant if clicking in the ground area
+                    if (y > this.groundLevel - 100) {
+                        this.plantTree(x, this.groundLevel);
+                    }
+                });
+            }
+
+            plantTree(x, y) {
+                const tree = new Tree(x, y, this.selectedTreeType, this.treeTypes[this.selectedTreeType], this);
+                this.trees.push(tree);
+                
+                // Create planting particles
+                for (let i = 0; i < 8; i++) {
+                    this.particles.push(new Particle(x, y, 'plant'));
+                }
+                
+                this.updateStats();
+            }
+
+            updateStats() {
+                const treeCount = this.trees.length;
+                const uniqueTypes = new Set(this.trees.map(tree => tree.type)).size;
+                const diversity = Math.min(100, (uniqueTypes / Object.keys(this.treeTypes).length) * 100);
+                
+                document.getElementById('tree-count').textContent = treeCount;
+                document.getElementById('diversity-level').textContent = Math.floor(diversity);
+            }
+
+            update() {
+                this.time += 0.016;
+                
+                // Enhanced time progression
+                this.dayProgress = (this.time * 0.1) % 1; // Day cycle
+                this.yearProgress = (this.time * 0.005) % 1; // Year cycle
+                this.seasonProgress = (this.yearProgress * 4) % 4; // Season within year
+                
+                // Smoother season progression
+                const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
+                const currentSeasonIndex = Math.floor(this.seasonProgress);
+                const currentSeason = seasons[currentSeasonIndex];
+                
+                if (currentSeason !== this.season) {
+                    this.season = currentSeason;
+                    document.getElementById('season').textContent = this.season;
+                    
+                    // Trigger seasonal change effects
+                    this.createSeasonalParticles();
+                }
+                
+                // Update trees with seasonal and time context
+                this.trees.forEach(tree => tree.update(this.season, this.seasonProgress, this.time));
+                
+                // Update particles
+                this.particles = this.particles.filter(particle => {
+                    particle.update();
+                    return particle.life > 0;
+                });
+                
+                // Add natural atmospheric particles based on season
+                if (Math.random() < 0.02) {
+                    this.addAtmosphericParticles();
+                }
+            }
+
+            createSeasonalParticles() {
+                // Create particles for seasonal transitions
+                for (let i = 0; i < 15; i++) {
+                    const x = Math.random() * this.canvas.width;
+                    const y = Math.random() * this.groundLevel;
+                    this.particles.push(new Particle(x, y, 'seasonal'));
+                }
+            }
+
+            addAtmosphericParticles() {
+                const particleTypes = {
+                    'Spring': 'pollen',
+                    'Summer': 'dust', 
+                    'Autumn': 'leaf',
+                    'Winter': 'snow'
+                };
+                
+                const x = Math.random() * this.canvas.width;
+                const y = 50 + Math.random() * 100;
+                this.particles.push(new Particle(x, y, particleTypes[this.season] || 'dust'));
+            }
+
+            render() {
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw background sky
+                this.drawSky();
+                
+                // Draw terrarium glass container
+                this.drawContainer();
+                
+                // Draw ground
+                this.drawGround();
+                
+                // Draw trees (back to front by x position)
+                const sortedTrees = [...this.trees].sort((a, b) => a.x - b.x);
+                sortedTrees.forEach(tree => tree.render(this.ctx));
+                
+                // Draw particles
+                this.particles.forEach(particle => particle.render(this.ctx));
+                
+                // Draw atmospheric effects
+                this.drawAtmosphere();
+            }
+
+            drawSky() {
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.groundLevel);
+                
+                // Enhanced sky colors based on season
+                switch (this.season) {
+                    case 'Spring':
+                        gradient.addColorStop(0, '#87CEEB');
+                        gradient.addColorStop(0.3, '#B0E0E6');
+                        gradient.addColorStop(0.7, '#E0F6FF');
+                        gradient.addColorStop(1, '#F0FFFF');
+                        break;
+                    case 'Summer':
+                        gradient.addColorStop(0, '#4169E1');
+                        gradient.addColorStop(0.4, '#6495ED');
+                        gradient.addColorStop(0.8, '#87CEEB');
+                        gradient.addColorStop(1, '#B0E0E6');
+                        break;
+                    case 'Autumn':
+                        gradient.addColorStop(0, '#CD853F');
+                        gradient.addColorStop(0.3, '#D2691E');
+                        gradient.addColorStop(0.7, '#DEB887');
+                        gradient.addColorStop(1, '#F5DEB3');
+                        break;
+                    case 'Winter':
+                        gradient.addColorStop(0, '#B0C4DE');
+                        gradient.addColorStop(0.3, '#C0C0C0');
+                        gradient.addColorStop(0.7, '#F0F8FF');
+                        gradient.addColorStop(1, '#FFFAFA');
+                        break;
+                }
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.groundLevel);
+                
+                // Add subtle clouds
+                this.drawClouds();
+            }
+
+            drawClouds() {
+                this.ctx.save();
+                this.ctx.globalAlpha = 0.3;
+                this.ctx.fillStyle = '#FFFFFF';
+                
+                // Animated clouds
+                for (let i = 0; i < 4; i++) {
+                    const x = ((this.time * 5 + i * 200) % (this.canvas.width + 200)) - 100;
+                    const y = 100 + i * 40 + Math.sin(this.time * 0.5 + i) * 20;
+                    
+                    // Cloud shape using multiple circles
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, 30, 0, Math.PI * 2);
+                    this.ctx.arc(x + 30, y, 40, 0, Math.PI * 2);
+                    this.ctx.arc(x + 60, y, 35, 0, Math.PI * 2);
+                    this.ctx.arc(x + 25, y - 20, 25, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                
+                this.ctx.restore();
+            }
+
+            drawGround() {
+                // Enhanced soil gradient
+                const groundGradient = this.ctx.createLinearGradient(0, this.groundLevel, 0, this.canvas.height);
+                groundGradient.addColorStop(0, '#8B4513');
+                groundGradient.addColorStop(0.2, '#A0522D');
+                groundGradient.addColorStop(0.5, '#8B4513');
+                groundGradient.addColorStop(0.8, '#654321');
+                groundGradient.addColorStop(1, '#4A2C2A');
+                
+                this.ctx.fillStyle = groundGradient;
+                this.ctx.fillRect(0, this.groundLevel, this.canvas.width, this.canvas.height - this.groundLevel);
+                
+                // Add textured grass layer
+                this.drawGrass();
+                
+                // Add small rocks and details
+                this.drawGroundDetails();
+            }
+
+            drawGrass() {
+                this.ctx.save();
+                
+                // Enhanced grass with more realistic appearance and less movement
+                const grassLayers = [
+                    { color: '#2F5233', width: 2.5, alpha: 0.9, density: 8 },
+                    { color: '#228B22', width: 2.0, alpha: 0.8, density: 10 },
+                    { color: '#32CD32', width: 1.5, alpha: 0.7, density: 12 },
+                    { color: '#90EE90', width: 1.0, alpha: 0.6, density: 15 }
+                ];
+                
+                grassLayers.forEach((layer, index) => {
+                    this.ctx.strokeStyle = layer.color;
+                    this.ctx.lineWidth = layer.width;
+                    this.ctx.globalAlpha = layer.alpha;
+                    this.ctx.lineCap = 'round';
+                    
+                    for (let x = index * 3; x < this.canvas.width; x += layer.density) {
+                        const baseHeight = 12 + Math.random() * 15 - index * 2;
+                        const grassHeight = baseHeight * (0.8 + Math.random() * 0.4);
+                        
+                        // Reduced sway movement - much more subtle
+                        const gentleSway = Math.sin(this.time * 0.3 + x * 0.005) * 0.8;
+                        
+                        // Multiple grass blades per position for fullness
+                        for (let blade = 0; blade < 2; blade++) {
+                            const offsetX = (Math.random() - 0.5) * 3;
+                            const bladeX = x + offsetX;
+                            
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(bladeX, this.groundLevel);
+                            
+                            // More natural grass curve
+                            const midX = bladeX + gentleSway * 0.5;
+                            const midY = this.groundLevel - grassHeight * 0.4;
+                            const tipX = bladeX + gentleSway + (Math.random() - 0.5) * 2;
+                            const tipY = this.groundLevel - grassHeight;
+                            
+                            this.ctx.quadraticCurveTo(midX, midY, tipX, tipY);
+                            this.ctx.stroke();
+                        }
+                    }
+                });
+                
+                this.ctx.restore();
+            }
+
+            drawGroundDetails() {
+                this.ctx.save();
+                
+                // Small rocks
+                this.ctx.fillStyle = '#696969';
+                this.ctx.globalAlpha = 0.6;
+                
+                for (let i = 0; i < 20; i++) {
+                    const x = (i * 137) % this.canvas.width; // Prime number for distribution
+                    const y = this.groundLevel + Math.random() * 30 + 10;
+                    const size = Math.random() * 4 + 2;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                
+                this.ctx.restore();
+            }
+
+            drawContainer() {
+                // Glass container walls
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                
+                // Left wall
+                this.ctx.moveTo(50, 50);
+                this.ctx.lineTo(50, this.canvas.height - 50);
+                
+                // Right wall  
+                this.ctx.moveTo(this.canvas.width - 50, 50);
+                this.ctx.lineTo(this.canvas.width - 50, this.canvas.height - 50);
+                
+                // Bottom
+                this.ctx.moveTo(50, this.canvas.height - 50);
+                this.ctx.lineTo(this.canvas.width - 50, this.canvas.height - 50);
+                
+                this.ctx.stroke();
+                
+                // Glass reflection effects
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                this.ctx.lineWidth = 1;
+                this.ctx.beginPath();
+                this.ctx.moveTo(70, 70);
+                this.ctx.lineTo(70, this.canvas.height - 70);
+                this.ctx.moveTo(this.canvas.width - 70, 70);
+                this.ctx.lineTo(this.canvas.width - 70, this.canvas.height - 70);
+                this.ctx.stroke();
+            }
+
+            drawAtmosphere() {
+                this.ctx.save();
+                
+                // Enhanced mist/fog effect
+                for (let i = 0; i < 5; i++) {
+                    const x = (this.time * 8 + i * 150) % (this.canvas.width + 100);
+                    const y = this.groundLevel - 60 + Math.sin(this.time * 0.3 + i) * 25;
+                    const radius = 25 + Math.sin(this.time * 0.4 + i) * 15;
+                    
+                    const mistGradient = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
+                    mistGradient.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+                    mistGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
+                    mistGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    
+                    this.ctx.fillStyle = mistGradient;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                
+                // Floating particles/pollen
+                this.drawFloatingParticles();
+                
+                this.ctx.restore();
+            }
+
+            drawFloatingParticles() {
+                this.ctx.save();
+                this.ctx.fillStyle = 'rgba(255, 223, 186, 0.6)';
+                
+                for (let i = 0; i < 15; i++) {
+                    const x = (this.time * 12 + i * 50) % this.canvas.width;
+                    const y = 100 + Math.sin(this.time * 0.8 + i) * 200;
+                    const size = 1 + Math.sin(this.time * 2 + i) * 1;
+                    
+                    this.ctx.globalAlpha = 0.3 + Math.sin(this.time * 3 + i) * 0.3;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+                
+                this.ctx.restore();
+            }
+
+            animate() {
+                this.update();
+                this.render();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        class Tree {
+            constructor(x, y, type, config, terrarium) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.config = config;
+                this.terrarium = terrarium;
+                this.age = 0;
+                this.plantedTime = Date.now();
+                
+                // Realistic starting size (sapling)
+                this.height = 8 + Math.random() * 4;
+                this.maxHeight = 60 + Math.random() * 80; // More variation
+                this.trunkWidth = 2 + Math.random() * 2;
+                this.maxTrunkWidth = this.maxHeight * 0.12;
+                this.canopyRadius = 8 + Math.random() * 6;
+                this.maxCanopyRadius = this.maxHeight * 0.8;
+                
+                // Growth characteristics
+                this.growthRate = 0.08 + Math.random() * 0.04; // Slower, more realistic
+                this.maturityAge = 100 + Math.random() * 100; // Time to reach maturity
+                
+                // Animation properties
+                this.swayAngle = 0;
+                this.swaySpeed = 0.008 + Math.random() * 0.004; // Slower sway
+                this.seasonalOffset = Math.random() * Math.PI * 2;
+                
+                // Seasonal adaptation
+                this.currentSeasonalColor = config.seasonalColors.spring;
+                this.leafDensity = 1.0;
+                this.hasFlowers = type === 'cherry';
+                this.hasFruit = Math.random() < 0.3; // Some trees develop fruit
+            }
+
+            update(season, seasonProgress, globalTime) {
+                this.age += 0.016;
+                
+                // Realistic growth over time
+                const growthFactor = this.calculateGrowthFactor(season);
+                const maturityRatio = Math.min(this.age / this.maturityAge, 1);
+                
+                if (this.height < this.maxHeight) {
+                    const adjustedGrowthRate = this.growthRate * growthFactor * (1 - maturityRatio * 0.8);
+                    this.height += adjustedGrowthRate;
+                    
+                    // Proportional growth
+                    const heightRatio = this.height / this.maxHeight;
+                    this.canopyRadius = Math.min(
+                        this.canopyRadius + adjustedGrowthRate * 2.5,
+                        this.maxCanopyRadius * Math.sqrt(heightRatio)
+                    );
+                    this.trunkWidth = Math.min(
+                        this.trunkWidth + adjustedGrowthRate * 0.3,
+                        this.maxTrunkWidth * heightRatio
+                    );
+                }
+                
+                // Seasonal color adaptation
+                this.updateSeasonalAppearance(season, seasonProgress);
+                
+                // Natural swaying with seasonal variation
+                const windStrength = this.getWindStrength(season);
+                this.swayAngle += this.swaySpeed * windStrength;
+                
+                // Occasional leaf dropping in autumn
+                if (season === 'Autumn' && Math.random() < 0.005) {
+                    this.dropLeaves();
+                }
+            }
+
+            calculateGrowthFactor(season) {
+                // Trees grow faster in spring/summer, slower in autumn/winter
+                switch (season) {
+                    case 'Spring': return 1.8;
+                    case 'Summer': return 1.4;
+                    case 'Autumn': return 0.6;
+                    case 'Winter': return 0.2;
+                    default: return 1.0;
+                }
+            }
+
+            updateSeasonalAppearance(season, seasonProgress) {
+                const colors = this.config.seasonalColors;
+                this.currentSeasonalColor = colors[season.toLowerCase()] || colors.spring;
+                
+                // Adjust leaf density based on season
+                switch (season) {
+                    case 'Spring':
+                        this.leafDensity = 0.7 + (seasonProgress % 1) * 0.3;
+                        break;
+                    case 'Summer':
+                        this.leafDensity = 1.0;
+                        break;
+                    case 'Autumn':
+                        this.leafDensity = 1.0 - (seasonProgress % 1) * 0.4;
+                        break;
+                    case 'Winter':
+                        this.leafDensity = this.type === 'pine' ? 0.8 : 0.3;
+                        break;
+                }
+            }
+
+            getWindStrength(season) {
+                // Different wind patterns by season
+                const baseStrength = {
+                    'Spring': 1.2,
+                    'Summer': 0.8,
+                    'Autumn': 1.5,
+                    'Winter': 1.8
+                };
+                return baseStrength[season] || 1.0;
+            }
+
+            dropLeaves() {
+                // Create falling leaf particles
+                for (let i = 0; i < 3; i++) {
+                    const leafX = this.x + (Math.random() - 0.5) * this.canopyRadius;
+                    const leafY = this.y - this.height - this.canopyRadius/2;
+                    this.terrarium.particles.push(new Particle(leafX, leafY, 'leaf'));
+                }
+            }
+
+            render(ctx) {
+                ctx.save();
+                
+                // Apply swaying transform
+                ctx.translate(this.x, this.y);
+                ctx.rotate(Math.sin(this.swayAngle) * 0.05);
+                
+                // Draw tree shadow
+                this.drawShadow(ctx);
+                
+                // Draw enhanced trunk with texture
+                this.drawTrunk(ctx);
+                
+                // Draw canopy with enhanced details
+                this.drawCanopy(ctx);
+                
+                ctx.restore();
+            }
+
+            drawShadow(ctx) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.setTransform(1, 0, -0.3, 0.3, 0, 0);
+                ctx.fillRect(-this.trunkWidth/2, -this.height, this.trunkWidth, this.height);
+                
+                // Canopy shadow
+                const canopyY = -this.height - this.canopyRadius/2;
+                ctx.beginPath();
+                ctx.arc(0, canopyY, this.canopyRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            drawTrunk(ctx) {
+                // Enhanced trunk with gradient and texture
+                const trunkGradient = ctx.createLinearGradient(-this.trunkWidth/2, 0, this.trunkWidth/2, 0);
+                const baseColor = this.config.trunkColor;
+                const darkColor = this.adjustBrightness(baseColor, -30);
+                const lightColor = this.adjustBrightness(baseColor, 20);
+                
+                trunkGradient.addColorStop(0, darkColor);
+                trunkGradient.addColorStop(0.3, baseColor);
+                trunkGradient.addColorStop(0.7, baseColor);
+                trunkGradient.addColorStop(1, lightColor);
+                
+                ctx.fillStyle = trunkGradient;
+                ctx.fillRect(-this.trunkWidth/2, -this.height, this.trunkWidth, this.height);
+                
+                // Add bark texture
+                ctx.strokeStyle = darkColor;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.3;
+                for (let i = 0; i < this.height; i += 15) {
+                    ctx.beginPath();
+                    ctx.moveTo(-this.trunkWidth/2 + 2, -i);
+                    ctx.lineTo(this.trunkWidth/2 - 2, -i);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            drawCanopy(ctx) {
+                const canopyY = -this.height - this.canopyRadius/2;
+                
+                // Use seasonal color instead of base color
+                const seasonalColor = this.currentSeasonalColor;
+                const adjustedRadius = this.canopyRadius * this.leafDensity;
+                
+                // Enhanced canopy with seasonal gradient and glow
+                const canopyGradient = ctx.createRadialGradient(0, canopyY, 0, 0, canopyY, adjustedRadius);
+                const darkColor = this.adjustBrightness(seasonalColor, -25);
+                const lightColor = this.adjustBrightness(seasonalColor, 35);
+                
+                canopyGradient.addColorStop(0, lightColor);
+                canopyGradient.addColorStop(0.6, seasonalColor);
+                canopyGradient.addColorStop(1, darkColor);
+                
+                ctx.fillStyle = canopyGradient;
+                
+                // Seasonal glow effects
+                ctx.shadowColor = seasonalColor;
+                ctx.shadowBlur = 6 + this.leafDensity * 4;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                
+                switch (this.config.canopyShape) {
+                    case 'round':
+                        ctx.beginPath();
+                        ctx.arc(0, canopyY, this.canopyRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                        
+                    case 'triangle':
+                        ctx.beginPath();
+                        ctx.moveTo(0, canopyY - this.canopyRadius);
+                        ctx.lineTo(-this.canopyRadius, canopyY + this.canopyRadius/2);
+                        ctx.lineTo(this.canopyRadius, canopyY + this.canopyRadius/2);
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                        
+                    case 'oval':
+                        ctx.beginPath();
+                        ctx.ellipse(0, canopyY, this.canopyRadius * 0.7, this.canopyRadius, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                        
+                    case 'maple':
+                        // Draw maple leaf shape
+                        ctx.beginPath();
+                        ctx.arc(0, canopyY, this.canopyRadius * 0.8, 0, Math.PI * 2);
+                        ctx.fill();
+                        // Add some maple leaf details
+                        ctx.fillStyle = '#FF4500';
+                        ctx.beginPath();
+                        ctx.arc(-this.canopyRadius * 0.3, canopyY, this.canopyRadius * 0.4, 0, Math.PI * 2);
+                        ctx.arc(this.canopyRadius * 0.3, canopyY, this.canopyRadius * 0.4, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                        
+                    case 'weeping':
+                        // Draw weeping willow
+                        ctx.beginPath();
+                        ctx.arc(0, canopyY, this.canopyRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                        // Draw hanging branches
+                        ctx.strokeStyle = this.config.color;
+                        ctx.lineWidth = 3;
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            const startX = Math.cos(angle) * this.canopyRadius * 0.8;
+                            const startY = canopyY + Math.sin(angle) * this.canopyRadius * 0.8;
+                            const endX = startX + Math.cos(angle) * 20;
+                            const endY = startY + 30 + Math.random() * 20;
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(startX, startY);
+                            ctx.quadraticCurveTo(endX, startY + 15, endX, endY);
+                            ctx.stroke();
+                        }
+                        break;
+                        
+                    default:
+                        ctx.beginPath();
+                        ctx.arc(0, canopyY, this.canopyRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                }
+                
+                // Reset shadow
+                ctx.shadowBlur = 0;
+                
+                // Add leaf details
+                this.addLeafDetails(ctx, canopyY);
+            }
+
+            adjustBrightness(color, amount) {
+                // Simple color brightness adjustment with safety checks
+                if (!color || typeof color !== 'string') {
+                    return '#228B22'; // Default green fallback
+                }
+                
+                let hex = color;
+                if (color.startsWith('#')) {
+                    hex = color.replace('#', '');
+                } else if (color.startsWith('rgb')) {
+                    // Convert rgb to hex first
+                    const rgb = color.match(/\d+/g);
+                    if (rgb && rgb.length >= 3) {
+                        const r = parseInt(rgb[0]);
+                        const g = parseInt(rgb[1]);
+                        const b = parseInt(rgb[2]);
+                        hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+                    } else {
+                        return '#228B22'; // Fallback
+                    }
+                } else {
+                    return '#228B22'; // Fallback for invalid format
+                }
+                
+                const num = parseInt(hex, 16);
+                if (isNaN(num)) {
+                    return '#228B22'; // Fallback for invalid hex
+                }
+                
+                const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+                const g = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amount));
+                const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+
+            addLeafDetails(ctx, canopyY) {
+                // Add small leaf details for texture
+                ctx.save();
+                ctx.globalAlpha = 0.4;
+                
+                const leafCount = Math.floor(this.canopyRadius / 8);
+                for (let i = 0; i < leafCount; i++) {
+                    const angle = (i / leafCount) * Math.PI * 2;
+                    const radius = this.canopyRadius * 0.7;
+                    const x = Math.cos(angle) * radius;
+                    const y = canopyY + Math.sin(angle) * radius;
+                    
+                    ctx.fillStyle = this.adjustBrightness(this.config.color, Math.random() * 40 - 20);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.life = 1;
+                this.age = 0;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+                
+                // Type-specific properties
+                this.setupParticleType();
+            }
+
+            setupParticleType() {
+                switch (this.type) {
+                    case 'plant':
+                        this.vx = (Math.random() - 0.5) * 2;
+                        this.vy = (Math.random() - 0.5) * 2 - 1;
+                        this.decay = 0.02;
+                        this.size = Math.random() * 4 + 2;
+                        this.color = '#90EE90';
+                        this.gravity = 0.1;
+                        break;
+                        
+                    case 'leaf':
+                        this.vx = (Math.random() - 0.5) * 1.5;
+                        this.vy = Math.random() * 0.5 + 0.5;
+                        this.decay = 0.006; // Slower decay for leaves
+                        this.size = Math.random() * 6 + 4;
+                        this.colors = ['#FF6347', '#FFD700', '#FF8C00', '#DC143C'];
+                        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                        this.gravity = 0.05; // Lighter gravity for floating effect
+                        this.sway = Math.random() * 0.02 + 0.01;
+                        break;
+                        
+                    case 'snow':
+                        this.vx = (Math.random() - 0.5) * 0.5;
+                        this.vy = Math.random() * 0.8 + 0.2;
+                        this.decay = 0.005; // Very slow decay
+                        this.size = Math.random() * 3 + 2;
+                        this.color = '#FFFFFF';
+                        this.gravity = 0.02; // Very light
+                        this.melt = false;
+                        break;
+                        
+                    case 'pollen':
+                        this.vx = (Math.random() - 0.5) * 0.8;
+                        this.vy = (Math.random() - 0.5) * 0.8;
+                        this.decay = 0.008;
+                        this.size = Math.random() * 2 + 1;
+                        this.color = '#FFFF99';
+                        this.gravity = -0.02; // Slight upward tendency
+                        this.float = Math.random() * 0.02 + 0.01;
+                        break;
+                        
+                    case 'dust':
+                        this.vx = (Math.random() - 0.5) * 1.2;
+                        this.vy = (Math.random() - 0.5) * 1.2;
+                        this.decay = 0.015;
+                        this.size = Math.random() * 2 + 0.5;
+                        this.color = '#DEB887';
+                        this.gravity = 0.03;
+                        break;
+                        
+                    case 'seasonal':
+                        this.vx = (Math.random() - 0.5) * 3;
+                        this.vy = (Math.random() - 0.5) * 3;
+                        this.decay = 0.02;
+                        this.size = Math.random() * 5 + 2;
+                        this.color = '#FFD700';
+                        this.gravity = 0.08;
+                        break;
+                        
+                    default:
+                        this.vx = (Math.random() - 0.5) * 2;
+                        this.vy = (Math.random() - 0.5) * 2 - 1;
+                        this.decay = 0.02;
+                        this.size = Math.random() * 4 + 2;
+                        this.color = '#DEB887';
+                        this.gravity = 0.1;
+                        break;
+                }
+            }
+
+            update() {
+                this.age += 0.016;
+                
+                // Type-specific movement
+                switch (this.type) {
+                    case 'leaf':
+                        // Swaying motion for leaves
+                        this.vx += Math.sin(this.age * 2) * this.sway;
+                        this.rotation += this.rotationSpeed;
+                        break;
+                        
+                    case 'snow':
+                        // Gentle swaying for snow
+                        this.vx += Math.sin(this.age * 1.5) * 0.01;
+                        break;
+                        
+                    case 'pollen':
+                        // Floating motion for pollen
+                        this.vx += Math.sin(this.age * 3) * this.float;
+                        this.vy += Math.cos(this.age * 2.5) * this.float;
+                        break;
+                }
+                
+                // Apply movement
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Apply gravity and air resistance
+                this.vy += this.gravity;
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                
+                // Decay life
+                this.life -= this.decay;
+            }
+
+            render(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                
+                // Translate and rotate for leaf particles
+                if (this.type === 'leaf') {
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    
+                    // Draw leaf shape
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size * 0.6, this.size, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Add leaf stem
+                    ctx.strokeStyle = '#8B4513';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(0, this.size * 0.3);
+                    ctx.stroke();
+                    
+                } else if (this.type === 'snow') {
+                    // Draw snowflake
+                    ctx.translate(this.x, this.y);
+                    ctx.fillStyle = this.color;
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 1;
+                    
+                    // Simple snowflake pattern
+                    for (let i = 0; i < 6; i++) {
+                        ctx.rotate(Math.PI / 3);
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(0, -this.size);
+                        ctx.stroke();
+                        
+                        // Small branches
+                        ctx.beginPath();
+                        ctx.moveTo(0, -this.size * 0.7);
+                        ctx.lineTo(-this.size * 0.3, -this.size * 0.9);
+                        ctx.moveTo(0, -this.size * 0.7);
+                        ctx.lineTo(this.size * 0.3, -this.size * 0.9);
+                        ctx.stroke();
+                    }
+                    
+                } else {
+                    // Standard circular particles
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // Initialize the forest terrarium when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ForestTerrarium();
+        });
+    </script>
+</body>
+</html>
