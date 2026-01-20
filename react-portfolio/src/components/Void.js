@@ -64,7 +64,9 @@ const Void = () => {
       if (userInput.length === konamiCode.length) {
         const matches = userInput.every((key, index) => key === konamiCode[index]);
         if (matches && !konamiUnlocked) {
-          unlockKonamiProject();
+          setKonamiUnlocked(true);
+          showKonamiNotification();
+          playKonamiSound();
         }
       }
     };
@@ -75,12 +77,6 @@ const Void = () => {
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [konamiUnlocked]);
-
-  const unlockKonamiProject = () => {
-    setKonamiUnlocked(true);
-    showKonamiNotification();
-    playKonamiSound();
-  };
 
   const showKonamiNotification = () => {
     const notification = document.createElement('div');
@@ -119,10 +115,6 @@ const Void = () => {
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.1);
-  };
-
-  const konamiMessage = () => {
-    alert('🌌 You have accessed the void archives. Some secrets are meant to be discovered by those who remember the old ways. 🌌');
   };
 
   return (

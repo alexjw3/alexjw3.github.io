@@ -7,8 +7,6 @@ const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const DEFAULT_GLOW_COLOR = "0, 255, 0";
 const MOBILE_BREAKPOINT = 768;
 
-const cardData = [];
-
 const createParticleElement = (
   x,
   y,
