@@ -255,7 +255,7 @@ class CanvAscii {
     this.camera.position.z = 30;
 
     this.scene = new THREE.Scene();
-    this.mouse = { x: 0, y: 0 };
+    this.mouse = { x: this.width / 2, y: this.height / 2 };
 
     this.onMouseMove = this.onMouseMove.bind(this);
 
@@ -266,7 +266,7 @@ class CanvAscii {
   setMesh() {
     this.textCanvas = new CanvasTxt(this.textString, {
       fontSize: this.textFontSize,
-      fontFamily: 'IBM Plex Mono',
+      fontFamily: 'Menlo, Monaco, Consolas, monospace',
       color: this.textColor,
     });
     this.textCanvas.resize();
@@ -303,7 +303,7 @@ class CanvAscii {
     this.renderer.setClearColor(0x000000, 0);
 
     this.filter = new AsciiFilter(this.renderer, {
-      fontFamily: 'IBM Plex Mono',
+      fontFamily: 'Menlo, Monaco, Consolas, monospace',
       fontSize: this.asciiFontSize,
       invert: true,
     });
@@ -311,8 +311,9 @@ class CanvAscii {
     this.container.appendChild(this.filter.domElement);
     this.setSize(this.width, this.height);
 
-    this.container.addEventListener('mousemove', this.onMouseMove);
-    this.container.addEventListener('touchmove', this.onMouseMove);
+    // Track mouse globally so both components follow the same cursor
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('touchmove', this.onMouseMove);
   }
 
   setSize(w, h) {
@@ -333,10 +334,7 @@ class CanvAscii {
 
   onMouseMove(evt) {
     const e = evt.touches ? evt.touches[0] : evt;
-    const bounds = this.container.getBoundingClientRect();
-    const x = e.clientX - bounds.left;
-    const y = e.clientY - bounds.top;
-    this.mouse = { x, y };
+    this.mouse = { x: e.clientX, y: e.clientY };
   }
 
   animate() {
@@ -360,11 +358,12 @@ class CanvAscii {
   }
 
   updateRotation() {
-    const x = Math.map(this.mouse.y, 0, this.height, 0.5, -0.5);
-    const y = Math.map(this.mouse.x, 0, this.width, -0.5, 0.5);
+    // Map mouse position to rotation - face toward the mouse
+    const targetX = Math.map(this.mouse.y, 0, window.innerHeight, 0.4, -0.4);
+    const targetY = Math.map(this.mouse.x, 0, window.innerWidth, -0.4, 0.4);
 
-    this.mesh.rotation.x += (x - this.mesh.rotation.x) * 0.05;
-    this.mesh.rotation.y += (y - this.mesh.rotation.y) * 0.05;
+    this.mesh.rotation.x += (targetX - this.mesh.rotation.x) * 0.08;
+    this.mesh.rotation.y += (targetY - this.mesh.rotation.y) * 0.08;
   }
 
   clear() {
@@ -391,8 +390,8 @@ class CanvAscii {
     cancelAnimationFrame(this.animationFrameId);
     this.filter.dispose();
     this.container.removeChild(this.filter.domElement);
-    this.container.removeEventListener('mousemove', this.onMouseMove);
-    this.container.removeEventListener('touchmove', this.onMouseMove);
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('touchmove', this.onMouseMove);
     this.clear();
     this.renderer.dispose();
   }
@@ -412,57 +411,61 @@ export default function ASCIIText({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const { width, height } = containerRef.current.getBoundingClientRect();
+    let ro;
+    let cancelled = false;
 
-    if (width === 0 || height === 0) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && entry.boundingClientRect.width > 0 && entry.boundingClientRect.height > 0) {
-            const { width: w, height: h } = entry.boundingClientRect;
+    const initAscii = () => {
+      if (cancelled || !containerRef.current) return;
 
-            asciiRef.current = new CanvAscii(
-              { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves },
-              containerRef.current,
-              w,
-              h
-            );
-            asciiRef.current.load();
+      const { width, height } = containerRef.current.getBoundingClientRect();
 
-            observer.disconnect();
-          }
-        },
-        { threshold: 0.1 }
-      );
+      if (width === 0 || height === 0) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting && entry.boundingClientRect.width > 0 && entry.boundingClientRect.height > 0) {
+              const { width: w, height: h } = entry.boundingClientRect;
 
-      observer.observe(containerRef.current);
+              asciiRef.current = new CanvAscii(
+                { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves },
+                containerRef.current,
+                w,
+                h
+              );
+              asciiRef.current.load();
 
-      return () => {
-        observer.disconnect();
-        if (asciiRef.current) {
-          asciiRef.current.dispose();
-        }
-      };
-    }
+              observer.disconnect();
+            }
+          },
+          { threshold: 0.1 }
+        );
 
-    asciiRef.current = new CanvAscii(
-      { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves },
-      containerRef.current,
-      width,
-      height
-    );
-    asciiRef.current.load();
-
-    const ro = new ResizeObserver((entries) => {
-      if (!entries[0] || !asciiRef.current) return;
-      const { width: w, height: h } = entries[0].contentRect;
-      if (w > 0 && h > 0) {
-        asciiRef.current.setSize(w, h);
+        observer.observe(containerRef.current);
+        return;
       }
-    });
-    ro.observe(containerRef.current);
+
+      asciiRef.current = new CanvAscii(
+        { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves },
+        containerRef.current,
+        width,
+        height
+      );
+      asciiRef.current.load();
+
+      ro = new ResizeObserver((entries) => {
+        if (!entries[0] || !asciiRef.current) return;
+        const { width: w, height: h } = entries[0].contentRect;
+        if (w > 0 && h > 0) {
+          asciiRef.current.setSize(w, h);
+        }
+      });
+      ro.observe(containerRef.current);
+    };
+
+    initAscii();
 
     return () => {
-      ro.disconnect();
+      cancelled = true;
+      if (ro) ro.disconnect();
       if (asciiRef.current) {
         asciiRef.current.dispose();
       }
@@ -480,20 +483,12 @@ export default function ASCIIText({
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap');
-
         .ascii-text-container canvas {
           position: absolute;
           left: 0;
           top: 0;
           width: 100%;
           height: 100%;
-          image-rendering: optimizeSpeed;
-          image-rendering: -moz-crisp-edges;
-          image-rendering: -o-crisp-edges;
-          image-rendering: -webkit-optimize-contrast;
-          image-rendering: optimize-contrast;
-          image-rendering: crisp-edges;
           image-rendering: pixelated;
         }
 
